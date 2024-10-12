@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- include env.js from the local folder , it contains the api_key -->
+    <script src="env.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="button" value="show items" onclick="showItems()">
+    <input type="text" id="category" placeholder="Category">
+    <table id="category-itmes">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>category</th>
+                <th>audio</th>
+                <th>title</th>
+                <th>description</th>
+                <th>image</th>
+            </tr>
+        </thead>
+        <tbody id="items">
+        </tbody>
+    </table>
+    <div id="add_item" stlye="margin: 25px; background-color: coral;">
+        <input type="text" id="add_category" placeholder="Category">
+        <label for="audio">Audio:</label>
+        <input type="file" id="audio" placeholder="Audio">
+        <input type="text" id="title" placeholder="Title">
+        <input type="text" id="description" placeholder="Description">
+        <label for="image">Image:</label>
+        <input type="file" id="image" placeholder="Image">
+        <input type="button" value="Add Item" onclick="addItem()">
+    </div>
+    <script>
+
+
+
+        async function addItem() {
+            const category = document.getElementById("add_category").value;
+            const audio = document.getElementById("audio").files[0];
+            const title = document.getElementById("title").value;
+            const description = document.getElementById("description").value;
+            const image = document.getElementById("image").files[0];
+
+            const formData = new FormData();
+            console.log("category", category);
+            formData.append("category", category);
+            formData.append("audio", audio);
+            formData.append("title", title);
+            formData.append("description", description);
+            formData.append("image", image);
+
+            const token1 = getCookie("token1");
+            const token2 = getCookie("token2");
+            console.log("token1", token1);
+            console.log("token2", token2);
+
+            const request = new Request(`${base_url}/playlist/post/`, {
+                method: "POST",
+                body: formData,
+                headers: new Headers({
+                    "token1": token1,
+                    "token2": token2
+                })
+            });
+
+            fetch(request)
+                .then((response) => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log(data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            }
+        }
+
+        async function showItems() {
+            const category = encodeURIComponent(document.getElementById("category").value);
+            const request = new Request(`${base_url}/playlist/get/${category}/${api_key}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            fetch(request)
+                .then((response) => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // Append the items to the table
+                    const items = document.getElementById("items");
+                    items.innerHTML = "";
+                    data.forEach((item) => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${item.id}</td>
+                            <td>${item.category}</td>
+                            <td>${item.audio}</td>
+                            <td>${item.title}</td>
+                            <td>${item.description}</td>
+                            <td><img src="${item.image}" alt="${item.title}" width="100"></td>
+                        `;
+                        items.appendChild(row);
+                    });
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    </script>
+
+</body>
+
+</html>
