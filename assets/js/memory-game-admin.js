@@ -174,8 +174,7 @@ async function deleteCategory() {
     }
 }
 
-async function deleteItem() {
-    const id = document.getElementById("delete_id").value;
+async function deleteItem(id) {    
     const token1 = getCookie("token1");
     const token2 = getCookie("token2");
 
@@ -194,10 +193,14 @@ async function deleteItem() {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return response.json();
+            return;
         })
-        .then((data) => {
-            console.log(data);
+        .then(() => {            
+            // Remove the item from the resultsJSON
+            resultsJSON = resultsJSON.filter(item => item.id !== id);
+            // Remove the item from the table
+            const row = document.getElementById("row-" + id);
+            row.remove();
         })
         .catch((error) => {
             console.log(error);
