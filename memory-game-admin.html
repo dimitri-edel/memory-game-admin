@@ -32,9 +32,11 @@
         <tbody id="listing-items">
         </tbody>
     </table>
-    <a href="javascript:prevPage()" id="btn_prev">Prev</a>
-    <a href="javascript:nextPage()" id="btn_next">Next</a>
-    page: <span id="page"></span>
+    <!-- Button for adding items -->
+     <button id="add-item"><i class="fa-solid fa-square-plus"></i></button>
+    <a href="javascript:prevPage()" id="btn_prev"><i class="fa-solid fa-backward"></i></a>
+    page: <span id="page"></span>&nbsp;of&nbsp;<span id="total_pages"></span>
+    <a href="javascript:nextPage()" id="btn_next"><i class="fa-solid fa-forward"></i></a>
 
     <div id="add_item" stlye="margin: 25px; background-color: coral;">
         <h1>Add Item</h1>
@@ -47,7 +49,7 @@
         <input type="file" id="image" placeholder="Image" accept=".jpg, .webp, .jpeg, .png">
         <input type="button" value="Add Item" onclick="addItem()">
     </div>
-    <div>
+    <!-- <div>
         <h1>Update item</h1>
         <input type="text" id="update_id" placeholder="ID">
         <input type="text" id="update_category" placeholder="Category">
@@ -58,7 +60,7 @@
         <label for="image">Image:</label>
         <input type="file" id="update_image" placeholder="Image">
         <input type="button" value="Update Item" onclick="updateItem()">
-    </div>
+    </div> -->
     <div>
         <h1>Delete item</h1>
         <input type="text" id="delete_id" placeholder="ID">

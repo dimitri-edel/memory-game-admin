@@ -1,0 +1,29 @@
+.selected-row {
+    background-color: #dddfdf;
+}
+
+th,
+td {
+    padding: 15px;
+    text-align: left;
+}
+
+th {
+    background-color: #d3edea;
+}
+
+td {
+    background-color: #f8fbfb;
+}
+table img {
+    width: auto;
+    height: 50px;
+}
+
+.image-update {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* align items vertically */
+    flex-direction: column;
+}
