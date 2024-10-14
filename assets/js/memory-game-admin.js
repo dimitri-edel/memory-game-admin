@@ -74,24 +74,19 @@ function hideInitialFilename(intial_section_id, select_section_id) {
     document.getElementById(select_section_id).style.display = "flex";
 }
 
-async function updateItem(id) {
-    // const id = document.getElementById("update_id").value;
-    // const category = document.getElementById("update_category").value;
-    // const audio = document.getElementById("update_audio").files[0];
-    // const title = document.getElementById("update_title").value;
-    // const description = document.getElementById("update_description").value;
-    // const image = document.getElementById("update_image").files[0];
-    // console.log(`updating category: ${category}`);
-
+async function updateItem(id) {  
+    // Get the row of the selected item  
     const row = document.getElementById("row-" + id);
+    // Get the values of the selected item
     const category = row.querySelector("#update_category").value;
     const audio = row.querySelector("#update_audio");
     const title = row.querySelector("#update_title").value;
     const description = row.querySelector("#update_description").value;
     const image = row.querySelector("#update_image");
     console.log(`updating category: ${category}`);
-
+    // Create a FormData object
     const formData = new FormData();
+    // Add the values to the FormData object
     formData.append("category", category);
     // Check if a new audio file has been selected
     if (audio.files.length > 0) {
@@ -103,10 +98,10 @@ async function updateItem(id) {
     if (image.files.length > 0) {
         formData.append("image", image.files[0]);
     }
-
+    // Get the tokens from the cookies
     const token1 = getCookie("token1");
     const token2 = getCookie("token2");
-
+    // Create a request object
     const request = new Request(`${base_url}/playlist/update-item/${id}/`, {
         method: "PUT",
         body: formData,
@@ -115,7 +110,7 @@ async function updateItem(id) {
             "token2": token2
         })
     });
-
+    // Fetch the request
     fetch(request)
         .then((response) => {
             console.log(response);
@@ -125,7 +120,25 @@ async function updateItem(id) {
             return response.json();
         })
         .then((data) => {
-            console.log(data);
+            // Update secelted_item with the new values
+            selected_item.category = data.category;
+            selected_item.audio = data.audio;
+            selected_item.title = data.title;
+            selected_item.description = data.description;
+            selected_item.image = data.image;            
+            // If the response is successful, unselect the item
+            unselectItem(selected_item);
+            // Update the resultsJSON
+            resultsJSON = resultsJSON.map(item => {
+                if (item.id === id) {
+                    item.category = data.category;
+                    item.audio = data.audio;
+                    item.title = data.title;
+                    item.description = data.description;
+                    item.image = data.image;                    
+                }
+                return item;
+            });
         })
         .catch((error) => {
             console.log(error);
