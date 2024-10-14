@@ -25,8 +25,8 @@
                 <th>title</th>
                 <th>description</th>
                 <th>image</th>
-                <th>Update</th>
-                <th>Delete</th>
+                <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody id="listing-items">
@@ -34,22 +34,12 @@
     </table>
     <table id="add_item_table"></table>
     <!-- Button for adding items -->
-     <button id="add-item" onclick="showAddItemTable()"><i class="fa-solid fa-square-plus"></i></button>
+     <div id="add-button-container">
+         <button id="add-item-button" onclick="showAddItemTable()"><i class="fa-solid fa-square-plus"></i></button>
+     </div>
     <a href="javascript:prevPage()" id="btn_prev"><i class="fa-solid fa-backward"></i></a>
     page: <span id="page"></span>&nbsp;of&nbsp;<span id="total_pages"></span>
     <a href="javascript:nextPage()" id="btn_next"><i class="fa-solid fa-forward"></i></a>
-
-    <!-- <div id="add_item" stlye="margin: 25px; background-color: coral;">
-        <h1>Add Item</h1>
-        <input type="text" id="add_category" placeholder="Category">
-        <label for="audio">Audio:</label>        
-        <input type="file" id="audio" placeholder="Audio" accept=".mp3">
-        <input type="text" id="title" placeholder="Title">
-        <input type="text" id="description" placeholder="Description">
-        <label for="image">Image:</label>        
-        <input type="file" id="image" placeholder="Image" accept=".jpg, .webp, .jpeg, .png">
-        <input type="button" value="Add Item" onclick="addItem()">
-    </div> -->
     
     <div>
         <h1>Delete category</h1>

@@ -1,3 +1,8 @@
+table {
+    width: 80%;
+    margin: 0 auto;
+}
+
 .selected-row {
     background-color: #dddfdf;
 }
@@ -26,4 +31,23 @@ table img {
     align-items: center;
     /* align items vertically */
     flex-direction: column;
+}
+
+#add-button-container {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    /* align items on the right */
+    justify-content: flex-end;
+}
+
+/* button for adding tiems */
+#add-item-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
 }
