@@ -77,8 +77,8 @@ function editItem(item) {
                         <button value="Change" onclick="hideInitialFilename('intial_audio_filename', 'audio-select')">Change</button>
                     </span>
                 </td>                
-                <td class="selected-row"><input id="update_title" type="text" value="${item.title}"></td>
-                <td class="selected-row"><input  id="update_description" type="text" value="${item.description}"></td>
+                <td class="selected-row"><input id="update_title" type="text" value="${item.title}"><br><span id="update-title-validator" class="validator-message"></span></td>
+                <td class="selected-row"><input  id="update_description" type="text" value="${item.description}"><br><span id="update-description-validator" class="validator-message"></span></td>
                 <td class="selected-row">
                     <span id="image-select"  style="display:none" class="image-update">
                         <input type="file" id="update_image" accept="image/*" onchange="showSelectedImage(this, 'image-select')">
@@ -165,6 +165,10 @@ async function updateItem(id) {
     if (image.files.length > 0) {
         formData.append("image", image.files[0]);
     }
+    // If the form is not valid, do nothing
+    if (!validateForm()) {
+        return;
+    }
     // Get the tokens from the cookies
     const token1 = getCookie("token1");
     const token2 = getCookie("token2");
@@ -215,6 +219,32 @@ async function updateItem(id) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(";").shift();
+    }
+
+    function clearEditFormValidators() {
+        document.getElementById("update-title-validator").innerHTML = "";
+        document.getElementById("update-description-validator").innerHTML = "";
+    }
+
+    function validateForm() {
+        // Clear the validators
+        clearEditFormValidators();
+        
+        const title = document.getElementById("update_title").value;
+        const description = document.getElementById("update_description").value;        
+
+        // Title may not exceed 30 characters and may not be empty
+        if (title.length > 30 || title === "") {
+            document.getElementById("update-title-validator").innerHTML = "Title may not exceed 30 characters and may not be empty";
+            return false;
+        }
+        // Description may not exceed 50 characters and may not be empty
+        if (description.length > 50 || description === "") {
+            document.getElementById("update-description-validator").innerHTML = "Description may not exceed 50 characters and may not be empty";
+            return false;
+        }
+
+        return true;
     }
 }
 
