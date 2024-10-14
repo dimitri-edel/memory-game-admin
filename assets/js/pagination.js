@@ -3,7 +3,7 @@ var current_page = 1;
 var records_per_page = 2;
 
 function prevPage() {
-    // Unselect item for memory-game-admin.js
+    // Unselect item for playlists.js
     // Even if there is no item selected, the variable needs to be set to null
     selected_item = null;
 
@@ -14,7 +14,7 @@ function prevPage() {
 }
 
 function nextPage() {
-    // Unselect item for memory-game-admin.js
+    // Unselect item for playlists.js
     // Even if there is no item selected, the variable needs to be set to null
     selected_item = null;
 
@@ -26,7 +26,7 @@ function nextPage() {
 
 // Function for going to the first page
 function firstPage() {
-    // Unselect item for memory-game-admin.js
+    // Unselect item for playlists.js
     // Even if there is no item selected, the variable needs to be set to null
     selected_item = null;
 
@@ -36,7 +36,7 @@ function firstPage() {
 
 // Function for going to the last page
 function lastPage() {
-    // Unselect item for memory-game-admin.js
+    // Unselect item for playlists.js
     // Even if there is no item selected, the variable needs to be set to null
     selected_item = null;
 
@@ -66,12 +66,12 @@ function changePage(page) {
 
     for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < resultsJSON.length; i++) {
         const item = resultsJSON[i];
+        console.log("categeory-name: ", getCategoryName(item.category));
         const row = document.createElement("tr");
         row.setAttribute("id", "row-" + item.id);
         const audio_file = base_url + item.audio;
-        row.innerHTML = `
-            <td>${item.id}</td>
-            <td>${item.category}</td>
+        row.innerHTML = `            
+            <td>${getCategoryName(item.category)}</td>
             <td><button onclick="play_audio('${audio_file}')"> Play</button></td>
             <td>${item.title}</td>
             <td>${item.description}</td>
@@ -87,14 +87,18 @@ function changePage(page) {
 
     if (page == 1) {
         btn_prev.style.visibility = "hidden";
+        btn_first.style.visibility = "hidden";
     } else {
         btn_prev.style.visibility = "visible";
+        btn_first.style.visibility = "visible";
     }
 
     if (page == numPages()) {
         btn_next.style.visibility = "hidden";
+        btn_last.style.visibility = "hidden";
     } else {
         btn_next.style.visibility = "visible";
+        btn_last.style.visibility = "visible";
     }
 }
 
@@ -103,7 +107,9 @@ function numPages() {
 }
 
 window.onload = function () {
-    // Call getItems() from memory-game-admin.js
+    // Call getCategories() from playlists.js
+    getCategories();
+    // Call getItems() from playlists.js
     getItems();
     changePage(1);
 };

@@ -1,10 +1,53 @@
 // The resultsJSON variable is used in pagination.js
 var resultsJSON = [];
+// The array of all categories
+var categories = [];
 // The selected_itme variable signifies the item that is currently selected
 var selected_item = null;
 // The boolean variables is_image_selected and is_audio_selected are used to check if an image or audio file has been selected
 var is_image_selected = false;
 var is_audio_selected = false;
+
+// Function to get all categories
+function getCategories() {
+    const request = new Request(`${base_url}/playlist/category/get-all/${api_key}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        }
+    });
+
+    fetch(request)
+        .then((response) => {
+            console.log(response);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            // If the categories array is not empty, clear it
+            if (categories.length > 0) {
+                categories = [];
+            }
+            data.forEach((category) => {
+                // Add every category to the categories array
+                categories.push(category);
+            })
+        }).catch((error) => {
+            console.log(error);
+        });
+}
+// Get the name of the category by its id
+function getCategoryName(id) {
+    let name = "";
+    categories.forEach((category) => {
+        if (category.id === id) {
+            name = category.name;
+        }
+    });    
+    return name;
+}
 
 function editItem(item) {
     let row = document.getElementById("row-" + item.id);
@@ -20,9 +63,8 @@ function editItem(item) {
     selected_item = item;
 
 
-    row.innerHTML = `
-                <td id="update_id" class="selected-row">${item.id}</td>
-                <td class="selected-row"><input  id="update_category" type="text" value="${item.category}" required></td>
+    row.innerHTML = `                
+                <td class="selected-row"><select  id="update_category" value="${item.category}">${renderCategoryOptions()}</select></td>
                 <td class="selected-row">
                     <span id="audio-select" style="display:none" class="audio-update">
                         <label for="audio">Audio:</label>
@@ -35,8 +77,8 @@ function editItem(item) {
                         <button value="Change" onclick="hideInitialFilename('intial_audio_filename', 'audio-select')">Change</button>
                     </span>
                 </td>                
-                <td class="selected-row"><input id="update_title" type="text" value="${item.title}" required></td>
-                <td class="selected-row"><input  id="update_description" type="text" value="${item.description}" required></td>
+                <td class="selected-row"><input id="update_title" type="text" value="${item.title}"></td>
+                <td class="selected-row"><input  id="update_description" type="text" value="${item.description}"></td>
                 <td class="selected-row">
                     <span id="image-select"  style="display:none" class="image-update">
                         <input type="file" id="update_image" accept="image/*" onchange="showSelectedImage(this, 'image-select')">
@@ -78,9 +120,8 @@ function unselectItem(item) {
     is_image_selected = false;
     is_audio_selected = false;
 
-    row.innerHTML = `
-                <td>${item.id}</td>
-                <td>${item.category}</td>
+    row.innerHTML = `                
+                <td>${getCategoryName(item.category)}</td>
                 <td><button onclick="play_audio('${base_url}${item.audio}')"> Play</button></td>
                 <td>${item.title}</td>
                 <td>${item.description}</td>
@@ -251,6 +292,16 @@ async function deleteItem(id) {
         if (parts.length === 2) return parts.pop().split(";").shift();
     }
 }
+
+// function for rendering categorie options
+function renderCategoryOptions() {
+    let options = "";
+    categories.forEach((category) => {
+        options += `<option value="${category.id}">${category.name}</option>`;
+    });
+    return options;
+}
+
 // function for appending the elements for adding an item to the table with id="add_item_table"
 function showAddItemTable() {
     const add_item_table = document.getElementById("add_item_table");
@@ -266,7 +317,7 @@ function showAddItemTable() {
         <th></th>
         <th></th>
         <tr>
-            <td><input type="text" id="add_category"><br><span id="add-category-validator" class="validator-message"></span></td>
+            <td><select id="add_category">${renderCategoryOptions()}</seclect></td>
             <td><input type="file" id="add_audio" accept="audio/*"><br><span id="add-audio-validator" class="validator-message"></span></td>
             <td><input type="text" id="add_title"><br><span id="add-title-validator" class="validator-message"></span></td>
             <td><input type="text" id="add_description"><br><span id="add-description-validator" class="validator-message"></span></td>
@@ -290,15 +341,15 @@ async function addItem() {
     const title = document.getElementById("add_title").value;
     const description = document.getElementById("add_description").value;
     const image = document.getElementById("add_image").files[0];
-
-    const formData = new FormData();    
+    console.log(`adding category: ${category}`);
+    const formData = new FormData();
     formData.append("category", category);
     formData.append("audio", audio);
     formData.append("title", title);
     formData.append("description", description);
     formData.append("image", image);
     // If the form is not valid, do nothing
-    if(!validateForm()) {
+    if (!validateForm()) {
         return;
     }
 
@@ -323,6 +374,7 @@ async function addItem() {
             return response.json();
         })
         .then((data) => {
+            console.log(data);
             // Add the new item to the resultsJSON
             resultsJSON.push(data);
             // Add the new item to the table
@@ -332,7 +384,7 @@ async function addItem() {
             const audio_file = base_url + data.audio;
             row.innerHTML = `
                 <td>${data.id}</td>
-                <td>${data.category}</td>
+                <td>${getCategoryName(data.category)}</td>
                 <td><button onclick="play_audio('${audio_file}')"> Play</button></td>
                 <td>${data.title}</td>
                 <td>${data.description}</td>
@@ -364,15 +416,9 @@ async function addItem() {
         const title = document.getElementById("add_title").value;
         const description = document.getElementById("add_description").value;
         const image = document.getElementById("add_image").files[0];
-        // Category may not exceed 100 characters and may not be empty
-        if (category.length > 100 || category === "") {
-            document.getElementById("add-category-validator").innerHTML = "Category may not exceed 100 characters and may not be empty";
-            return false;
-        }
-       
-        
+
         // An audio file must be selected
-        if (audio === null || audio === undefined) {            
+        if (audio === null || audio === undefined) {
             document.getElementById("add-audio-validator").innerHTML = "An audio file must be selected";
             return false;
         }
@@ -385,17 +431,17 @@ async function addItem() {
         if (description.length > 50 || description === "") {
             document.getElementById("add-description-validator").innerHTML = "Description may not exceed 50 characters and may not be empty";
             return false;
-        }        
+        }
         // An image file must be selected
         if (image === null || image === undefined) {
             document.getElementById("add-image-validator").innerHTML = "An image file must be selected";
             return false;
         }
+        return true;
     }
 
     // Function for clearing the validator messages
-    function clearValidators() {
-        document.getElementById("add-category-validator").innerHTML = "";
+    function clearValidators() {        
         document.getElementById("add-audio-validator").innerHTML = "";
         document.getElementById("add-title-validator").innerHTML = "";
         document.getElementById("add-description-validator").innerHTML = "";
@@ -408,9 +454,9 @@ play_audio = (audio) => {
     audioElement.play();
 }
 
-async function getItems() {    
+async function getItems() {
     let filter = encodeURIComponent(document.getElementById("filter-field").value);
-    if(filter === "" || filter === null) {
+    if (filter === "" || filter === null) {
         filter = "none";
     }
     const request = new Request(`${base_url}/playlist/get-all/${filter}/${api_key}`, {
@@ -421,14 +467,14 @@ async function getItems() {
     });
 
     fetch(request)
-        .then((response) => {
-            console.log(response);
+        .then((response) => {            
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             return response.json();
         })
         .then((data) => {
+            console.log(data);
             // if resultsJSON is not empty, clear it
             if (resultsJSON.length > 0) {
                 resultsJSON = [];
@@ -449,7 +495,7 @@ async function getItems() {
 }
 
 // Function that clicks on a hidden input file element and sets its visibility back to relative
-function input_file_click(id) {
-    document.getElementById(id).click();
-    document.getElementById(id).style = "display: relative";
-}
+// function input_file_click(id) {
+//     document.getElementById(id).click();
+//     document.getElementById(id).style = "display: relative";
+// }
