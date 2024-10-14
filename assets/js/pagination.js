@@ -54,8 +54,8 @@ function changePage(page) {
             <td>${item.title}</td>
             <td>${item.description}</td>
             <td><img src="${base_url}${item.image}" alt="${item.title}" width="100"></td>
-            <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square"></i></span></td>
-            <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can"></i></span></td>
+            <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+            <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
         `;
         items.appendChild(row);
     }

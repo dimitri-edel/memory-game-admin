@@ -32,6 +32,15 @@ table img {
     /* align items vertically */
     flex-direction: column;
 }
+.button-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    margin: 0 autho;
+    color: #0f100f;
+    background-color: white;
+    margin: 0 auto;
+}
 
 #add-button-container {
     width: 80%;
@@ -41,13 +50,26 @@ table img {
     justify-content: flex-end;
 }
 
-/* button for adding tiems */
-#add-item-button {
+.add-button-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    margin-left: 30px;
     background-color: #4CAF50;
     color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
+    margin: 0 auto;
+}
+/* button for adding tiems */
+#add-item-button {
+    background-color: #4CAF50; 
+    width: 35px;   
+    padding: 0;    
     border: none;
-    cursor: pointer;
-    border-radius: 5px;
+    text-align: center;
+}
+
+#paginator {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }

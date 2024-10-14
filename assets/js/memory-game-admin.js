@@ -1,12 +1,16 @@
 // The resultsJSON variable is used in pagination.js
 var resultsJSON = [];
+// The selected_itme variable signifies the item that is currently selected
 var selected_item = null;
+// The boolean variables is_image_selected and is_audio_selected are used to check if an image or audio file has been selected
+var is_image_selected = false;
+var is_audio_selected = false;
 
 function editItem(item) {
     let row = document.getElementById("row-" + item.id);
     // Parse the item if it is a JSON string
     if (typeof item === 'string') {
-        item = JSON.parse(item);    
+        item = JSON.parse(item);
     }
     // If there is a selected item, unselect it
     if (selected_item !== null) {
@@ -23,7 +27,7 @@ function editItem(item) {
                     <span id="audio-select" style="display:none" class="audio-update">
                         <label for="audio">Audio:</label>
                         <input type="file" id="update_audio" accept="audio/*" onchange="hideInitialFilename('initial_audio_filename')">
-                        <button onclick="cancelSelection('audio-select', 'intial_audio_filename')"><i class="fa-regular fa-rectangle-xmark"></i></button>                        
+                        <button onclick="cancelSelection('audio-select', 'intial_audio_filename')"><i class="fa-regular fa-rectangle-xmark button-icon"></i></button>                        
                     </span>
                     <!-- Element to display the initial file name -->
                     <span id="intial_audio_filename">                        
@@ -35,9 +39,8 @@ function editItem(item) {
                 <td class="selected-row"><input  id="update_description" type="text" value="${item.description}" required></td>
                 <td class="selected-row">
                     <span id="image-select"  style="display:none" class="image-update">
-                        <label for="image">Image:</label>
-                        <input type="file" id="update_image" accept="image/*">
-                        <button onclick="cancelSelection('image-select', 'intial_image_section')"><i class="fa-regular fa-rectangle-xmark"></i></button>
+                        <input type="file" id="update_image" accept="image/*" onchange="showSelectedImage(this, 'image-select')">
+                        <button onclick="cancelSelection('image-select', 'intial_image_section')"><i class="fa-regular fa-rectangle-xmark button-icon"></i></button>
                     </span>
                     <!-- Element to display the initial file name -->
                     <span id="intial_image_section" class="image-update">                        
@@ -45,13 +48,36 @@ function editItem(item) {
                         <button value="Change" onclick="hideInitialFilename('intial_image_section', 'image-select')">Change</button>
                     </span>
                 </td>                
-                <td class="selected-row"><span class="update-button" onclick="updateItem(${item.id})"><i class="fa-solid fa-cloud-arrow-up"></i></span></td>
-                <td class="selected-row"><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can"></i></span></td>
+                <td class="selected-row"><span class="update-button" onclick="updateItem(${item.id})"><i class="fa-solid fa-cloud-arrow-up button-icon"></i></span></td>
+                <td class="selected-row"><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
             `;
+}
+
+// Function to show the selected image
+function showSelectedImage(input, select_section_id) {
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const image = document.createElement("img");
+        image.src = e.target.result;
+        image.width = 100;
+        // If an image has been selected, remove the initial image from the select_section_id in the DOM
+        if (is_image_selected) {
+            document.getElementById(select_section_id).removeChild(document.getElementById(select_section_id).firstChild);
+        }
+        // Append the image as the first child of the select_section_id
+        document.getElementById(select_section_id).insertBefore(image, document.getElementById(select_section_id).firstChild);
+        is_image_selected = true;
+    }
+    reader.readAsDataURL(file);
 }
 
 function unselectItem(item) {
     let row = document.getElementById("row-" + item.id);
+    // Unselect files regardless of whether they are selected
+    is_image_selected = false;
+    is_audio_selected = false;
+
     row.innerHTML = `
                 <td>${item.id}</td>
                 <td>${item.category}</td>
@@ -59,8 +85,8 @@ function unselectItem(item) {
                 <td>${item.title}</td>
                 <td>${item.description}</td>
                 <td><img src="${base_url}${item.image}" alt="${item.title}" width="100"></td>
-                <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square"></i></span></td>
-                <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can"></i></span></td>
+                <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+                <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
             `;
 }
 
@@ -74,7 +100,7 @@ function hideInitialFilename(intial_section_id, select_section_id) {
     document.getElementById(select_section_id).style.display = "flex";
 }
 
-async function updateItem(id) {  
+async function updateItem(id) {
     // Get the row of the selected item  
     const row = document.getElementById("row-" + id);
     // Get the values of the selected item
@@ -125,7 +151,7 @@ async function updateItem(id) {
             selected_item.audio = data.audio;
             selected_item.title = data.title;
             selected_item.description = data.description;
-            selected_item.image = data.image;            
+            selected_item.image = data.image;
             // If the response is successful, unselect the item
             unselectItem(selected_item);
             // Update the resultsJSON
@@ -135,7 +161,7 @@ async function updateItem(id) {
                     item.audio = data.audio;
                     item.title = data.title;
                     item.description = data.description;
-                    item.image = data.image;                    
+                    item.image = data.image;
                 }
                 return item;
             });
@@ -187,7 +213,7 @@ async function deleteCategory() {
     }
 }
 
-async function deleteItem(id) {    
+async function deleteItem(id) {
     const token1 = getCookie("token1");
     const token2 = getCookie("token2");
 
@@ -208,7 +234,7 @@ async function deleteItem(id) {
             }
             return;
         })
-        .then(() => {            
+        .then(() => {
             // Remove the item from the resultsJSON
             resultsJSON = resultsJSON.filter(item => item.id !== id);
             // Remove the item from the table
@@ -242,8 +268,8 @@ function showAddItemTable() {
             <td><input type="text" id="add_title" required></td>
             <td><input type="text" id="add_description" required></td>
             <td><input type="file" id="add_image" accept="image/*" required></td>
-            <td><span class="add-button" onclick="addItem()"><i class="fa-solid fa-cloud-arrow-down"></i></span></td>
-            <td><span class="cancel-button" onclick="hideAddItemTable()"><i class="fa-solid fa-xmark"></i></span></td>
+            <td><span class="add-button" onclick="addItem()"><i class="fa-solid fa-cloud-arrow-down button-icon"></i></span></td>
+            <td><span class="cancel-button" onclick="hideAddItemTable()"><i class="fa-solid fa-xmark button-icon"></i></span></td>
         </tr>
     `;
 }
@@ -303,8 +329,8 @@ async function addItem() {
                 <td>${data.title}</td>
                 <td>${data.description}</td>
                 <td><img src="${base_url}${data.image}" alt="${data.title}" width="100"></td>
-                <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pen-to-square"></i></span></td>
-                <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash-can"></i></span></td>
+                <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+                <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
             `;
             items.appendChild(row);
             // Hide the add item table

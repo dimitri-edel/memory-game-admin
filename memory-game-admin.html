@@ -13,7 +13,7 @@
     <title>Document</title>
 </head>
 
-<body>    
+<body>
     <input type="button" value="show items" onclick="showItems()">
     <input type="text" id="category" placeholder="Category">
     <table id="listing-table">
@@ -34,13 +34,15 @@
     </table>
     <table id="add_item_table"></table>
     <!-- Button for adding items -->
-     <div id="add-button-container">
-         <button id="add-item-button" onclick="showAddItemTable()"><i class="fa-solid fa-square-plus"></i></button>
-     </div>
-    <a href="javascript:prevPage()" id="btn_prev"><i class="fa-solid fa-backward"></i></a>
-    page: <span id="page"></span>&nbsp;of&nbsp;<span id="total_pages"></span>
-    <a href="javascript:nextPage()" id="btn_next"><i class="fa-solid fa-forward"></i></a>
-    
+    <div id="add-button-container">
+        <span id="add-item-button" onclick="showAddItemTable()"><i class="fa-solid fa-square-plus add-button-icon"></i></span>
+    </div>
+    <!-- Buttons for the paginator -->
+    <div id="paginator">
+        <a href="javascript:prevPage()" id="btn_prev"><i class="fa-solid fa-backward"></i></a>
+        page: <span id="page"></span>&nbsp;of&nbsp;<span id="total_pages"></span>
+        <a href="javascript:nextPage()" id="btn_next"><i class="fa-solid fa-forward"></i></a>
+    </div>
     <div>
         <h1>Delete category</h1>
         <input type="text" id="delete_category" placeholder="Category">
