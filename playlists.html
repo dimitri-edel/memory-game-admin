@@ -10,10 +10,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Load memeory-game-admin.css from assets/css folder -->
     <link rel="stylesheet" href="./assets/css/memory-game-admin.css">
+    <!-- load navbar.css -->
+    <link rel="stylesheet" href="./assets/css/navbar.css">
     <title>Document</title>
 </head>
 
 <body>
+    <!-- Placeholder div for the Navigation Bar -->
+    <div id="navbar"></div>
     <!-- <input type="button" value="show items" onclick="showItems()"> -->
     <input type="text" id="filter-field" placeholder="Enter a keyword!" onkeyup="getItems()">
     <table id="listing-table">
@@ -53,10 +57,12 @@
         <input type="text" id="delete_category" placeholder="Category">
         <input type="button" value="Delete Category" onclick="deleteCategory()">
     </div>
-    <!-- load pagination.js from assets/js folder -->
-    <script src="./assets/js/pagination.js"></script>
     <!-- Load playlists.js from assets/js folder -->
     <script src="./assets/js/playlists.js"></script>
+    <!-- load pagination.js from assets/js folder -->
+    <script src="./assets/js/pagination.js"></script>
+    <!-- Load navbar.js from assets/js folder -->
+    <script src="./assets/js/loadNavBar.js"></script>
 </body>
 
 </html>
