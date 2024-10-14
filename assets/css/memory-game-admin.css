@@ -51,10 +51,10 @@ table img {
 }
 
 .add-button-icon {
-    width: 30px;
-    height: 30px;
-    font-size: 30px;
-    margin-left: 30px;
+    width: 50px;
+    height: 50px;
+    font-size: 50px;
+    /* margin-left: 30px; */
     background-color: #4CAF50;
     color: white;
     margin: 0 auto;
@@ -62,9 +62,10 @@ table img {
 /* button for adding tiems */
 #add-item-button {
     background-color: #4CAF50; 
-    width: 35px;   
+    width: 55px;   
     padding: 0;    
-    border: none;
+    border: solid 1px #071007;
+    border-radius: 10px;
     text-align: center;
 }
 

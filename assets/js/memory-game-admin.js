@@ -254,6 +254,9 @@ async function deleteItem(id) {
 // function for appending the elements for adding an item to the table with id="add_item_table"
 function showAddItemTable() {
     const add_item_table = document.getElementById("add_item_table");
+    // Hide the container with the button for adding items
+    document.getElementById("add-button-container").style.display = "none";
+
     add_item_table.innerHTML = `
         <th>category</th>
         <th>audio</th>
@@ -277,6 +280,8 @@ function showAddItemTable() {
 function hideAddItemTable() {
     const add_item_table = document.getElementById("add_item_table");
     add_item_table.innerHTML = "";
+    // Show the container with the button for adding items
+    document.getElementById("add-button-container").style.display = "flex";
 }
 
 async function addItem() {
