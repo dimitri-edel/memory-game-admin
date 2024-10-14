@@ -74,3 +74,24 @@ table img {
     justify-content: center;
     margin-top: 20px;
 }
+.paginator-button {
+    width: 30px;
+    height: 30px;
+    font-size: 30px;    
+    color: #0f100f;
+    background-color: white;
+    margin: 10px;
+}
+
+.paginator-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    margin: 0 auto;
+    color: #0f100f;
+    background-color: white;
+    margin: 0 auto;
+}
+.paginator-text {
+    margin: auto 5px;
+}

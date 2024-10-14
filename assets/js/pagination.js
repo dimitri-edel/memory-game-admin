@@ -24,6 +24,26 @@ function nextPage() {
     }
 }
 
+// Function for going to the first page
+function firstPage() {
+    // Unselect item for memory-game-admin.js
+    // Even if there is no item selected, the variable needs to be set to null
+    selected_item = null;
+
+    current_page = 1;
+    changePage(current_page);
+}
+
+// Function for going to the last page
+function lastPage() {
+    // Unselect item for memory-game-admin.js
+    // Even if there is no item selected, the variable needs to be set to null
+    selected_item = null;
+
+    current_page = numPages();
+    changePage(current_page);
+}
+
 function changePage(page) {
     // If there are no items, return
     if (resultsJSON.length == 0) {
@@ -31,6 +51,8 @@ function changePage(page) {
     }
     var btn_next = document.getElementById("btn_next");
     var btn_prev = document.getElementById("btn_prev");
+    var btn_first = document.getElementById("btn_first");
+    var btn_last = document.getElementById("btn_last");
     var page_span = document.getElementById("page");
     var total_pages_span = document.getElementById("total_pages");
 

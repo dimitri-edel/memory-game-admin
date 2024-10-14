@@ -39,9 +39,15 @@
     </div>
     <!-- Buttons for the paginator -->
     <div id="paginator">
-        <a href="javascript:prevPage()" id="btn_prev"><i class="fa-solid fa-backward"></i></a>
-        page: <span id="page"></span>&nbsp;of&nbsp;<span id="total_pages"></span>
-        <a href="javascript:nextPage()" id="btn_next"><i class="fa-solid fa-forward"></i></a>
+        <!-- link to the first page -->
+        <a href="javascript:firstPage()" id="btn_first" class="paginator-button"><i class="fa-solid fa-fast-backward paginator-icon"></i></a>
+        <!-- link to the previous page-->
+        <a href="javascript:prevPage()" id="btn_prev" class="paginator-button"><i class="fa-solid fa-backward paginator-icon"></i></a>
+        <span id="page" class="paginator-text"></span><span class="paginator-text">&nbsp;of&nbsp;</span><span id="total_pages" class="paginator-text"></span>
+        <!-- link to the next page -->
+        <a href="javascript:nextPage()" id="btn_next" class="paginator-button"><i class="fa-solid fa-forward paginator-icon"></i></a>
+        <!-- Link to the last page -->
+        <a href="javascript:lastPage()" id="btn_last" class="paginator-button"><i class="fa-solid fa-fast-forward paginator-icon"></i></a>
     </div>
     <div>
         <h1>Delete category</h1>
