@@ -225,13 +225,40 @@ async function deleteItem(id) {
         if (parts.length === 2) return parts.pop().split(";").shift();
     }
 }
+// function for appending the elements for adding an item to the table with id="add_item_table"
+function showAddItemTable() {
+    const add_item_table = document.getElementById("add_item_table");
+    add_item_table.innerHTML = `
+        <th>category</th>
+        <th>audio</th>
+        <th>title</th>
+        <th>description</th>
+        <th>image</th>
+        <th></th>
+        <th></th>
+        <tr>
+            <td><input type="text" id="add_category" required></td>
+            <td><input type="file" id="add_audio" accept="audio/*" required></td>
+            <td><input type="text" id="add_title" required></td>
+            <td><input type="text" id="add_description" required></td>
+            <td><input type="file" id="add_image" accept="image/*" required></td>
+            <td><span class="add-button" onclick="addItem()"><i class="fa-solid fa-cloud-arrow-down"></i></span></td>
+            <td><span class="cancel-button" onclick="hideAddItemTable()"><i class="fa-solid fa-xmark"></i></span></td>
+        </tr>
+    `;
+}
+// function for hiding the table with id="add_item_table"
+function hideAddItemTable() {
+    const add_item_table = document.getElementById("add_item_table");
+    add_item_table.innerHTML = "";
+}
 
 async function addItem() {
     const category = document.getElementById("add_category").value;
-    const audio = document.getElementById("audio").files[0];
-    const title = document.getElementById("title").value;
-    const description = document.getElementById("description").value;
-    const image = document.getElementById("image").files[0];
+    const audio = document.getElementById("add_audio").files[0];
+    const title = document.getElementById("add_title").value;
+    const description = document.getElementById("add_description").value;
+    const image = document.getElementById("add_image").files[0];
 
     const formData = new FormData();
     console.log("category", category);
@@ -262,7 +289,28 @@ async function addItem() {
             return response.json();
         })
         .then((data) => {
-            console.log(data);
+            // Add the new item to the resultsJSON
+            resultsJSON.push(data);
+            // Add the new item to the table
+            const items = document.getElementById("listing-items");
+            const row = document.createElement("tr");
+            row.setAttribute("id", "row-" + data.id);
+            const audio_file = base_url + data.audio;
+            row.innerHTML = `
+                <td>${data.id}</td>
+                <td>${data.category}</td>
+                <td><button onclick="play_audio('${audio_file}')"> Play</button></td>
+                <td>${data.title}</td>
+                <td>${data.description}</td>
+                <td><img src="${base_url}${data.image}" alt="${data.title}" width="100"></td>
+                <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pen-to-square"></i></span></td>
+                <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash-can"></i></span></td>
+            `;
+            items.appendChild(row);
+            // Hide the add item table
+            hideAddItemTable();
+            // Go to the last page
+            changePage(numPages());
         })
         .catch((error) => {
             console.log(error);
