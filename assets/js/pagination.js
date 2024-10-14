@@ -103,5 +103,7 @@ function numPages() {
 }
 
 window.onload = function () {
+    // Call getItems() from memory-game-admin.js
+    getItems();
     changePage(1);
 };

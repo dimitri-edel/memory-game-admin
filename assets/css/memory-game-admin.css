@@ -95,3 +95,9 @@ table img {
 .paginator-text {
     margin: auto 5px;
 }
+
+.validator-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}

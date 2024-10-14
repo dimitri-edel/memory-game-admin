@@ -266,11 +266,11 @@ function showAddItemTable() {
         <th></th>
         <th></th>
         <tr>
-            <td><input type="text" id="add_category" required></td>
-            <td><input type="file" id="add_audio" accept="audio/*" required></td>
-            <td><input type="text" id="add_title" required></td>
-            <td><input type="text" id="add_description" required></td>
-            <td><input type="file" id="add_image" accept="image/*" required></td>
+            <td><input type="text" id="add_category"><br><span id="add-category-validator" class="validator-message"></span></td>
+            <td><input type="file" id="add_audio" accept="audio/*"><br><span id="add-audio-validator" class="validator-message"></span></td>
+            <td><input type="text" id="add_title"><br><span id="add-title-validator" class="validator-message"></span></td>
+            <td><input type="text" id="add_description"><br><span id="add-description-validator" class="validator-message"></span></td>
+            <td><input type="file" id="add_image" accept="image/*"><br><span id="add-image-validator" class="validator-message"></span></td>
             <td><span class="add-button" onclick="addItem()"><i class="fa-solid fa-cloud-arrow-down button-icon"></i></span></td>
             <td><span class="cancel-button" onclick="hideAddItemTable()"><i class="fa-solid fa-xmark button-icon"></i></span></td>
         </tr>
@@ -291,13 +291,16 @@ async function addItem() {
     const description = document.getElementById("add_description").value;
     const image = document.getElementById("add_image").files[0];
 
-    const formData = new FormData();
-    console.log("category", category);
+    const formData = new FormData();    
     formData.append("category", category);
     formData.append("audio", audio);
     formData.append("title", title);
     formData.append("description", description);
     formData.append("image", image);
+    // If the form is not valid, do nothing
+    if(!validateForm()) {
+        return;
+    }
 
     const token1 = getCookie("token1");
     const token2 = getCookie("token2");
@@ -352,6 +355,52 @@ async function addItem() {
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(";").shift();
     }
+    // function for validating the form before adding an item
+    function validateForm() {
+        // Clear the validators
+        clearValidators();
+        const category = document.getElementById("add_category").value;
+        const audio = document.getElementById("add_audio").files[0];
+        const title = document.getElementById("add_title").value;
+        const description = document.getElementById("add_description").value;
+        const image = document.getElementById("add_image").files[0];
+        // Category may not exceed 100 characters and may not be empty
+        if (category.length > 100 || category === "") {
+            document.getElementById("add-category-validator").innerHTML = "Category may not exceed 100 characters and may not be empty";
+            return false;
+        }
+       
+        
+        // An audio file must be selected
+        if (audio === null || audio === undefined) {            
+            document.getElementById("add-audio-validator").innerHTML = "An audio file must be selected";
+            return false;
+        }
+        // Title may not exceed 30 characters and may not be empty
+        if (title.length > 30 || title === "") {
+            document.getElementById("add-title-validator").innerHTML = "Title may not exceed 30 characters and may not be empty";
+            return false;
+        }
+        // Description may not exceed 50 characters and may not be empty
+        if (description.length > 50 || description === "") {
+            document.getElementById("add-description-validator").innerHTML = "Description may not exceed 50 characters and may not be empty";
+            return false;
+        }        
+        // An image file must be selected
+        if (image === null || image === undefined) {
+            document.getElementById("add-image-validator").innerHTML = "An image file must be selected";
+            return false;
+        }
+    }
+
+    // Function for clearing the validator messages
+    function clearValidators() {
+        document.getElementById("add-category-validator").innerHTML = "";
+        document.getElementById("add-audio-validator").innerHTML = "";
+        document.getElementById("add-title-validator").innerHTML = "";
+        document.getElementById("add-description-validator").innerHTML = "";
+        document.getElementById("add-image-validator").innerHTML = "";
+    }
 }
 play_audio = (audio) => {
     console.log(audio);
@@ -359,9 +408,12 @@ play_audio = (audio) => {
     audioElement.play();
 }
 
-async function showItems() {
-    const category = encodeURIComponent(document.getElementById("category").value);
-    const request = new Request(`${base_url}/playlist/get/${category}/${api_key}`, {
+async function getItems() {    
+    let filter = encodeURIComponent(document.getElementById("filter-field").value);
+    if(filter === "" || filter === null) {
+        filter = "none";
+    }
+    const request = new Request(`${base_url}/playlist/get-all/${filter}/${api_key}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
