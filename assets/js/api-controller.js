@@ -205,6 +205,42 @@ class ApiController {
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(";").shift();
     }
+
+    login({ username, password }) {
+        console.log("username: ", username);
+        console.log("password: ", password);
+        let promise = new Promise((resolve, reject) => {
+        const request = new Request("http://localhost:8000/game_admin/login/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username: username, password: password }),
+        });
+
+        // const request2 = request.clone();
+
+       fetch(request)
+            .then((response) => { 
+                // print the response status code in the console
+                if(response.status !== 200){
+                    reject("Your username or password is incorrect");
+                }
+                console.log(response.status);
+                return response.json();
+            })
+            .then((data) => {
+                // Copy thoken1 and token2 from the data object to the cookie
+                document.cookie = `token1=${data.token1}`;
+                document.cookie = `token2=${data.token2}`;
+                resolve(data);
+            })
+            .catch((error) => {
+                reject(error);
+            });
+        });
+        return promise;
+    }
 }
 
 var apiController = new ApiController();

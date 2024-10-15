@@ -5,43 +5,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
 </head>
 
 <body>
     <input type="text" id="username" placeholder="Username">
     <input type="password" id="password" placeholder="Password">    
     <input type="button" value="Login" onclick="login()">
+    <span id="error-message" style="color:red; font-size:20px;"></span>
     <script>
         async function login() {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-            const request = new Request("http://localhost:8000/game_admin/login/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ username: username, password: password }),
+            
+            let promise = apiController.login({username, password});
+            promise.then((data) => {
+                // Redirect to playlists.html
+                window.location.href = "playlists.html";
+            })
+            .catch((error) => {
+                // Display error message
+                document.getElementById("error-message").innerText = error;
             });
-    
-            // const request2 = request.clone();
-    
-           fetch(request)
-                .then((response) => {
-                    console.log(response);
-                    return response.json();
-                })
-                .then((data) => {
-                    // Copy thoken1 and token2 from the data object to the cookie
-                    document.cookie = `token1=${data.token1}`;
-                    document.cookie = `token2=${data.token2}`;
-                    // Redirect to playlists.html
-                    window.location.href = "playlists.html";
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
         }
     </script>
+    <!-- load api-controller.js -->
+     <script src="./assets/js/api-controller.js"></script>
 </body>
 
 </html>
