@@ -53,9 +53,7 @@ function addItem() {
                 <td><span class="edit-button" onclick="editItem(${data.id})"><i class="fa-solid fa-pencil button-icon"></i></span></td>
                 <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash button-icon"></i></span></td>
             `;
-        items.appendChild(row);
-        // Hide the add item table
-        hideAddItemTable();
+        items.appendChild(row);        
         // Go to the last page
         changePage(numPages());
     }).catch((error) => {
@@ -86,8 +84,16 @@ function addItem() {
     }
 }
 
-function deleteItem() {
-
+function deleteItem(id) {
+    let promise = apiController.deleteCategory(id);
+    promise.then((data) => {
+        // Remove the item from the table
+        document.getElementById("row-" + id).remove();
+        // Go to the last page
+        changePage(numPages());
+    }).catch((error) => {
+        console.log(error);
+    });
 }
 
 function updateItem() {

@@ -78,6 +78,39 @@ class ApiController {
         return promise;
     }
 
+    deleteCategory = (id) => { 
+        let promise = new Promise((resolve, reject) => {
+            const token1 = this.getCookie("token1");
+            const token2 = this.getCookie("token2");
+
+            const request = new Request(`${base_url}/playlist/category/delete/${id}/`, {
+                method: "DELETE",
+                headers: new Headers({
+                    "token1": token1,
+                    "token2": token2
+                })
+            });
+
+            fetch(request)
+                .then((response) => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return;
+                })
+                .then((data) => {
+                    // Remove the item from the categories
+                    this.categories = this.categories.filter(item => item.id !== id);
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return promise;
+    }
+
     getCategoryName = (id) => {
         let name = "";
         this.categories.forEach((category) => {
