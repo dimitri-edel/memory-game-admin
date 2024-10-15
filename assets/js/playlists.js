@@ -328,43 +328,7 @@ async function deleteItem(id) {
         row.remove();
     }).catch((error) => {
         console.log(error);
-    });
-    // const token1 = getCookie("token1");
-    // const token2 = getCookie("token2");
-
-    // const request = new Request(`${base_url}/playlist/delete-item/${id}/`, {
-    //     method: "DELETE",
-    //     headers: new Headers({
-    //         "Content-Type": "application/json",
-    //         "token1": token1,
-    //         "token2": token2
-    //     })
-    // });
-
-    // fetch(request)
-    //     .then((response) => {
-    //         console.log(response);
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP error! status: ${response.status}`);
-    //         }
-    //         return;
-    //     })
-    //     .then(() => {
-    //         // Remove the item from the playlists
-    //         playlists = playlists.filter(item => item.id !== id);
-    //         // Remove the item from the table
-    //         const row = document.getElementById("row-" + id);
-    //         row.remove();
-    //     })
-    //     .catch((error) => {
-    //         console.log(error);
-    //     });
-
-    // function getCookie(name) {
-    //     const value = `; ${document.cookie}`;
-    //     const parts = value.split(`; ${name}=`);
-    //     if (parts.length === 2) return parts.pop().split(";").shift();
-    // }
+    });    
 }
 
 // function for rendering categorie options
@@ -378,33 +342,45 @@ function renderCategoryOptions() {
 
 // function for appending the elements for adding an item to the table with id="add_item_table"
 function showAddItemTable() {
-    const add_item_table = document.getElementById("add_item_table");
+    const listing_table = document.getElementById("listing-table");
+    // Create new tr element
+    const row = document.createElement("tr");
+
     // Hide the container with the button for adding items
     document.getElementById("add-button-container").style.display = "none";
-
-    add_item_table.innerHTML = `
-        <th>category</th>
+    let html_headers= `<th>category</th>
         <th>audio</th>
         <th>title</th>
         <th>description</th>
         <th>image</th>
         <th></th>
         <th></th>
+               
         <tr>
+         </tr>
+        `;
+
+    row.innerHTML = ` 
             <td><select id="add_category">${renderCategoryOptions()}</seclect></td>
             <td><input type="file" id="add_audio" accept="audio/*"><br><span id="add-audio-validator" class="validator-message"></span></td>
             <td><input type="text" id="add_title"><br><span id="add-title-validator" class="validator-message"></span></td>
             <td><input type="text" id="add_description"><br><span id="add-description-validator" class="validator-message"></span></td>
             <td><input type="file" id="add_image" accept="image/*"><br><span id="add-image-validator" class="validator-message"></span></td>
             <td><span class="add-button" onclick="addItem()"><i class="fa-solid fa-cloud-arrow-down button-icon"></i></span></td>
-            <td><span class="cancel-button" onclick="hideAddItemTable()"><i class="fa-solid fa-xmark button-icon"></i></span></td>
-        </tr>
+            <td><span class="cancel-button" onclick="hideAddItemTable()"><i class="fa-solid fa-xmark button-icon"></i></span></td>       
     `;
+    // Give the row the id "add_item_row"
+    row.setAttribute("id", "add_item_row");
+    // Append the row to the table as the last child
+    listing_table.appendChild(row);
+
 }
 // function for hiding the table with id="add_item_table"
 function hideAddItemTable() {
-    const add_item_table = document.getElementById("add_item_table");
-    add_item_table.innerHTML = "";
+    const listing_table = document.getElementById("listing-table");
+    // Remove the row with the id "add_item_row"
+    listing_table.removeChild(document.getElementById("add_item_row"));
+    
     // Show the container with the button for adding items
     document.getElementById("add-button-container").style.display = "inline";
 }
@@ -452,60 +428,6 @@ async function addItem() {
         console.log(error);
     });
 
-    // const token1 = getCookie("token1");
-    // const token2 = getCookie("token2");
-
-    // const request = new Request(`${base_url}/playlist/post/`, {
-    //     method: "POST",
-    //     body: formData,
-    //     headers: new Headers({
-    //         "token1": token1,
-    //         "token2": token2
-    //     })
-    // });
-
-    // fetch(request)
-    //     .then((response) => {
-    //         console.log(response);
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP error! status: ${response.status}`);
-    //         }
-    //         return response.json();
-    //     })
-    //     .then((data) => {
-    //         console.log(data);
-    //         // Add the new item to the playlists
-    //         playlists.push(data);
-    //         // Add the new item to the table
-    //         const items = document.getElementById("listing-items");
-    //         const row = document.createElement("tr");
-    //         row.setAttribute("id", "row-" + data.id);
-    //         const audio_file = base_url + data.audio;
-    //         row.innerHTML = `
-    //             <td>${data.id}</td>
-    //             <td>${getCategoryName(data.category)}</td>
-    //             <td><button onclick="play_audio('${audio_file}')"> Play</button></td>
-    //             <td>${data.title}</td>
-    //             <td>${data.description}</td>
-    //             <td><img src="${base_url}${data.image}" alt="${data.title}" width="100"></td>
-    //             <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
-    //             <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
-    //         `;
-    //         items.appendChild(row);
-    //         // Hide the add item table
-    //         hideAddItemTable();
-    //         // Go to the last page
-    //         changePage(numPages());
-    //     })
-    //     .catch((error) => {
-    //         console.log(error);
-    //     });
-
-    // function getCookie(name) {
-    //     const value = `; ${document.cookie}`;
-    //     const parts = value.split(`; ${name}=`);
-    //     if (parts.length === 2) return parts.pop().split(";").shift();
-    // }
     // function for validating the form before adding an item
     function validateForm() {
         // Clear the validators

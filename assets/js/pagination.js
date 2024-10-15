@@ -48,6 +48,8 @@ function lastPage() {
 function changePage(page) {
     // Call getPageName() from loadNavBar.js
     let pagename = getPageName();
+    // The function hideAddItemTable() is defined in categories.js and playlists.js
+    hideAddItemTable();
     if (pagename == "playlists.html") {
         loadPlalists(page);
     } else if (pagename == "categories.html") {
@@ -206,10 +208,26 @@ function loadCategories(page) {
         row.innerHTML = `            
                 <td>${item.name}</td>
                 <td>${item.description}</td>
-                <td><img src="${base_url}${item.image}" alt="${item.name}" width="100"></td>                
+                <td><img src="${base_url}${item.image}" alt="${item.name}" width="100"></td> 
+                <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+                <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>               
             `;
         items.appendChild(row);
     }
+
+    const row_with_add_button = document.createElement("tr");
+    row_with_add_button.innerHTML = ` 
+                <td></td><td></td><td></td><td></td>
+                <td>
+                    <!-- Button for adding items -->
+                    <span id="add-button-container">        
+                        <span id="add-item-button" onclick="showAddItemTable()">
+                            <i class="fa-solid fa-square-plus add-button-icon"></i>
+                        </span>
+                    </span>
+                </td>`;
+    // Append the row with the add button to the table
+    items.appendChild(row_with_add_button);
 
     page_span.innerHTML = page;
     total_pages_span.innerHTML = numPages();

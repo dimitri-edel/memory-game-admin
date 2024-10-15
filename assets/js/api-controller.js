@@ -38,6 +38,46 @@ class ApiController {
         });
         return promise;
     }
+
+    addCategory = ({name, description, image}) => {
+        let promise = new Promise((resolve, reject) => {
+            const formData = new FormData();
+            formData.append("name", name);
+            formData.append("description", description);
+            if(image != null){formData.append("image", image);}
+
+            const token1 = this.getCookie("token1");
+            const token2 = this.getCookie("token2");
+
+            const request = new Request(`${base_url}/playlist/category/post/`, {
+                method: "POST",
+                body: formData,
+                headers: new Headers({
+                    "token1": token1,
+                    "token2": token2
+                })
+            });
+
+            fetch(request)
+                .then((response) => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // Add the new item to the categories array
+                    this.categories.push(data);
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return promise;
+    }
+
     getCategoryName = (id) => {
         let name = "";
         this.categories.forEach((category) => {
@@ -224,8 +264,6 @@ class ApiController {
     }
 
     login({ username, password }) {
-        console.log("username: ", username);
-        console.log("password: ", password);
         let promise = new Promise((resolve, reject) => {
         const request = new Request("http://localhost:8000/game_admin/login/", {
             method: "POST",
@@ -242,14 +280,14 @@ class ApiController {
                 // print the response status code in the console
                 if(response.status !== 200){
                     reject("Your username or password is incorrect");
-                }
-                console.log(response.status);
+                }                
                 return response.json();
             })
             .then((data) => {
                 // Copy thoken1 and token2 from the data object to the cookie
-                document.cookie = `token1=${data.token1}`;
-                document.cookie = `token2=${data.token2}`;
+                // path=/ means that the cookie is available in the entire application
+                document.cookie = `token1=${data.token1}; path=/`;
+                document.cookie = `token2=${data.token2}; path=/`;
                 resolve(data);
             })
             .catch((error) => {
