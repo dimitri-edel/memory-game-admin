@@ -59,9 +59,17 @@ function changePage(page) {
 function numPages() {
     // If the current page is the playlists page, return the number of pages for the playlists
     if (getPageName() == "playlists.html") {
-        return Math.ceil(playlists.length / records_per_page);
+        let num = Math.ceil(playlists.length / records_per_page);
+        if (num <= 0 ) {
+            return 1;
+        }
+        return num;    
     } else if (getPageName() == "categories.html") {
-        return Math.ceil(categories_results.length / records_per_page);
+        let num = Math.ceil(categories_results.length / records_per_page);
+        if (num <= 0 ) {
+            return 1;
+        }
+        return num;
     }
 }
 
@@ -75,12 +83,19 @@ window.onload = function () {
             loadPlalists(1);
         }, 1000);
     }else if (getPageName() == "categories.html") {
-        // Call getCategories() from categories.js
-        getCategoriesResults();
-        // Wait for the categories to be loaded for a second
-        setTimeout(() => {
+        let promise = apiController.getCategories();
+        promise.then((data) => {
             loadCategories(1);
-        }, 1000);
+        }).catch((error) => {
+            console.log("Error loading categories: ");
+            console.log(error);
+        });
+        // Call getCategories() from categories.js
+        // getCategoriesResults();
+        // Wait for the categories to be loaded for a second
+        // setTimeout(() => {
+        //     loadCategories(1);
+        // }, 1000);
     }    
 };
 // Load the paginated table in the playlists page
@@ -143,11 +158,9 @@ function loadPlalists(page) {
 }
 
 // Load the paginated table in the categories page
-function loadCategories(page) {
-    console.log("categories_results:", categories_results);
-    console.log("categories_results length:", categories_results.length);
+function loadCategories(page) {    
     // If there are no items, return
-    if (categories_results.length == 0) {
+    if (apiController.categories.length == 0) {
         console.log("No categories to load. categories_results is empty.");
         return;
     }
@@ -166,8 +179,9 @@ function loadCategories(page) {
     const items = document.getElementById("listing-items");
     items.innerHTML = "";
 
-    for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < categories_results.length; i++) {       
-        const item = categories_results[i];
+    for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < apiController.categories.length; i++) {       
+        const item = apiController.categories[i];
+        console.log(`item: ${item} index: ${i}`);
         const row = document.createElement("tr");
         row.setAttribute("id", "row-" + item.id);
         row.innerHTML = `            

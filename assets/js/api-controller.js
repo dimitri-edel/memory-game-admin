@@ -1,7 +1,7 @@
 // Class for comunicating with the API
 class ApiController {
     constructor() {
-        this.cateories = [];
+        this.categories = [];
         this.playlists = [];
     }
 
@@ -23,11 +23,14 @@ class ApiController {
                 })
                 .then((data) => {
                     // If the categories array is not empty, clear it
-                    if (this.cateories.length > 0) {
-                        this.cateories = [];
+                    if (this.categories.length > 0) {
+                        this.categories = [];
                     }
-                    this.cateories.push(data);
-                    resolve(data);
+                    data.forEach((category) => {
+                        // Add every category to the categories array
+                        this.categories.push(category);
+                    });
+                    resolve(this.categories);
                 }).catch((error) => {
                     reject(error);
                 });
@@ -57,8 +60,10 @@ class ApiController {
                     return response.json();
                 })
                 .then((data) => {
-                    this.playlists.push(data);
-                    resolve(data);
+                    data.forEach((item) => {
+                        this.playlists.push(item);
+                    });
+                    resolve(this.playlists);
                 })
                 .catch((error) => {
                     reject(error);
@@ -201,3 +206,5 @@ class ApiController {
         if (parts.length === 2) return parts.pop().split(";").shift();
     }
 }
+
+var apiController = new ApiController();
