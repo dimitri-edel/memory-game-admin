@@ -111,7 +111,52 @@ class ApiController {
         return promise;
     }
 
-    
+    updateCategory = ({ id, name, description, image }) => {
+        let promise = new Promise((resolve, reject) => {
+            const formData = new FormData();
+            formData.append("name", name);
+            formData.append("description", description);
+            if(image != null){formData.append("image", image);}
+
+            const token1 = this.getCookie("token1");
+            const token2 = this.getCookie("token2");
+
+            const request = new Request(`${base_url}/playlist/category/update/${id}/`, {
+                method: "PUT",
+                body: formData,
+                headers: new Headers({
+                    "token1": token1,
+                    "token2": token2
+                })
+            });
+
+            fetch(request)
+                .then((response) => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // Update the categories
+                    this.categories = this.categories.map(item => {
+                        if (item.id === id) {
+                            item.name = data.name;
+                            item.description = data.description;
+                            item.image = data.image;
+                        }
+                        return item;
+                    });
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return promise;
+    }
+
     getCategoryName = (id) => {
         let name = "";
         this.categories.forEach((category) => {

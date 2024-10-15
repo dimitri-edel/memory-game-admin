@@ -52,7 +52,7 @@ function addItem() {
                 <td>${data.name}</td>
                 <td>${data.description}</td>
                 <td><img src="${image_file_path}" width="100"></td>
-                <td><span class="edit-button" onclick="editItem(${data.id})"><i class="fa-solid fa-pencil button-icon"></i></span></td>
+                <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pencil button-icon"></i></span></td>
                 <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash button-icon"></i></span></td>
             `;
         items.appendChild(row);        
@@ -98,7 +98,7 @@ function deleteItem(id) {
     });
 }
 
-function editItem() {
+function editItem(item) {
     let row = document.getElementById("row-" + item.id);
     // Parse the item if it is a JSON string
     if (typeof item === 'string') {
@@ -126,7 +126,7 @@ function cancelEdit() {
                 <td>${selected_item.name}</td>
                 <td>${selected_item.description}</td>
                 <td><img src="${base_url}${selected_item.image}" width="100"></td>
-                <td><span class="edit-button" onclick="editItem(${selected_item.id})"><i class="fa-solid fa-pencil button-icon"></i></span></td>
+                <td><span class="edit-button" onclick='editItem(${JSON.stringify(selected_item)})'><i class="fa-solid fa-pencil button-icon"></i></span></td>
                 <td><span class="delete-button" onclick="deleteItem(${selected_item.id})"><i class="fa-solid fa-trash button-icon"></i></span></td>
             `;
     selected_item = null;
