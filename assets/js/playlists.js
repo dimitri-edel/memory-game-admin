@@ -1,5 +1,5 @@
-// The resultsJSON variable is used in pagination.js
-var resultsJSON = [];
+// The playlists variable is used in pagination.js
+var playlists = [];
 // The array of all categories
 var categories = [];
 // The selected_itme variable signifies the item that is currently selected
@@ -199,8 +199,8 @@ async function updateItem(id) {
             selected_item.image = data.image;
             // If the response is successful, unselect the item
             unselectItem(selected_item);
-            // Update the resultsJSON
-            resultsJSON = resultsJSON.map(item => {
+            // Update the playlists
+            playlists = playlists.map(item => {
                 if (item.id === id) {
                     item.category = data.category;
                     item.audio = data.audio;
@@ -306,8 +306,8 @@ async function deleteItem(id) {
             return;
         })
         .then(() => {
-            // Remove the item from the resultsJSON
-            resultsJSON = resultsJSON.filter(item => item.id !== id);
+            // Remove the item from the playlists
+            playlists = playlists.filter(item => item.id !== id);
             // Remove the item from the table
             const row = document.getElementById("row-" + id);
             row.remove();
@@ -405,8 +405,8 @@ async function addItem() {
         })
         .then((data) => {
             console.log(data);
-            // Add the new item to the resultsJSON
-            resultsJSON.push(data);
+            // Add the new item to the playlists
+            playlists.push(data);
             // Add the new item to the table
             const items = document.getElementById("listing-items");
             const row = document.createElement("tr");
@@ -484,7 +484,7 @@ play_audio = (audio) => {
     audioElement.play();
 }
 
-async function getItems() {
+async function getPlaylists() {
     let filter = encodeURIComponent(document.getElementById("filter-field").value);
     if (filter === "" || filter === null) {
         filter = "none";
@@ -505,16 +505,16 @@ async function getItems() {
         })
         .then((data) => {
             console.log(data);
-            // if resultsJSON is not empty, clear it
-            if (resultsJSON.length > 0) {
-                resultsJSON = [];
+            // if playlists is not empty, clear it
+            if (playlists.length > 0) {
+                playlists = [];
             }
             data.forEach((item) => {
                 // add every item to reulstsJSON
-                resultsJSON.push(item);
+                playlists.push(item);
             });
-            // If the resultsJSON is not empty, show the first page
-            if (resultsJSON.length > 0) {
+            // If the playlists is not empty, show the first page
+            if (playlists.length > 0) {
                 // This function is in pagination.js
                 changePage(1);
             }

@@ -1,31 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- include env.js from the local folder , it contains the api_key -->
-    <script src="env.js"></script>
     <!-- Font awsome cdn -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Load playlists.css from assets/css folder -->
-    <link rel="stylesheet" href="./assets/css/playlists.css">
+    <!-- Load categories.css from assets/css folder -->
+    <link rel="stylesheet" href="./assets/css/categories.css">
     <!-- load navbar.css -->
     <link rel="stylesheet" href="./assets/css/navbar.css">
     <title>Document</title>
 </head>
-
 <body>
     <!-- Placeholder div for the Navigation Bar -->
     <div id="navbar"></div>
-    <!-- <input type="button" value="show items" onclick="showItems()"> -->
-    <input type="text" id="filter-field" placeholder="Enter a keyword!" onkeyup="getItems()">
+    <!-- Paginated table for results received from the API -->
     <table id="listing-table">
         <thead>
             <tr>                
-                <th>category</th>
-                <th>audio</th>
-                <th>title</th>
+                <th>name</th>                
                 <th>description</th>
                 <th>image</th>
                 <th></th>
@@ -35,11 +28,6 @@
         <tbody id="listing-items">
         </tbody>
     </table>
-    <table id="add_item_table"></table>
-    <!-- Button for adding items -->
-    <div id="add-button-container">
-        <span id="add-item-button" onclick="showAddItemTable()"><i class="fa-solid fa-square-plus add-button-icon"></i></span>
-    </div>
     <!-- Buttons for the paginator -->
     <div id="paginator">
         <!-- link to the first page -->
@@ -52,17 +40,13 @@
         <!-- Link to the last page -->
         <a href="javascript:lastPage()" id="btn_last" class="paginator-button"><i class="fa-solid fa-fast-forward paginator-icon"></i></a>
     </div>
-    <div>
-        <h1>Delete category</h1>
-        <input type="text" id="delete_category" placeholder="Category">
-        <input type="button" value="Delete Category" onclick="deleteCategory()">
-    </div>
-    <!-- Load navbar.js from assets/js folder -->
+    <!-- Load env.js during develeopment. ! REMOVE BEFORE DEPLOYING !-->
+    <script src="env.js"></script>
+    <!-- Load loadNavBar.js -->
     <script src="./assets/js/loadNavBar.js"></script>
-    <!-- Load playlists.js from assets/js folder -->
-    <script src="./assets/js/playlists.js"></script>
-    <!-- load pagination.js from assets/js folder -->
+    <!-- Load categories.js from assets/js folder -->
+    <script src="./assets/js/categories.js"></script>
+    <!-- Load pagination.js from assets/js folder -->
     <script src="./assets/js/pagination.js"></script>
 </body>
-
 </html>
