@@ -38,7 +38,16 @@ class ApiController {
         });
         return promise;
     }
-
+    getCategoryName = (id) => {
+        let name = "";
+        this.categories.forEach((category) => {
+            if (category.id === id) {
+                name = category.name;
+            }
+        });    
+        return name;
+    }
+    
     getPlaylists = () => {
         let promise = new Promise((resolve, reject) => {
             let filter = encodeURIComponent(document.getElementById("filter-field").value);

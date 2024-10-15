@@ -59,13 +59,13 @@ function changePage(page) {
 function numPages() {
     // If the current page is the playlists page, return the number of pages for the playlists
     if (getPageName() == "playlists.html") {
-        let num = Math.ceil(playlists.length / records_per_page);
+        let num = Math.ceil(apiController.playlists.length / records_per_page);
         if (num <= 0 ) {
             return 1;
         }
         return num;    
     } else if (getPageName() == "categories.html") {
-        let num = Math.ceil(categories_results.length / records_per_page);
+        let num = Math.ceil(apiController.categories.length / records_per_page);
         if (num <= 0 ) {
             return 1;
         }
@@ -76,12 +76,16 @@ function numPages() {
 window.onload = function () {
     // If the current page is the playlists page, call getItems() from playlists.js
     if (getPageName() == "playlists.html") {
-        getCategories();            
-        getPlaylists();
-        // Wait for the categories and playlists to be loaded for a second
-        setTimeout(() => {
+        // Call getCategories() and getPlaylists() from api-controller.js
+        let promise = apiController.getCategories();
+        let promise2 = apiController.getPlaylists();
+        Promise.all([promise, promise2]).then((values) => {
+            console.log("Categories and playlists loaded.");
             loadPlalists(1);
-        }, 1000);
+        }).catch((error) => {
+            console.log("Error loading playlists: ");
+            console.log(error);
+        });        
     }else if (getPageName() == "categories.html") {
         let promise = apiController.getCategories();
         promise.then((data) => {
@@ -100,8 +104,10 @@ window.onload = function () {
 };
 // Load the paginated table in the playlists page
 function loadPlalists(page) {
+    console.log("loadPlalists() called");
     // If there are no items, return
-    if (playlists.length == 0) {
+    if (apiController.playlists.length == 0) {
+        console.log("No playlists to load. playlists_results is empty.");
         return;
     }
     var btn_next = document.getElementById("btn_next");
@@ -119,14 +125,14 @@ function loadPlalists(page) {
     const items = document.getElementById("listing-items");
     items.innerHTML = "";
 
-    for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < playlists.length; i++) {
-        const item = playlists[i];
-        console.log("categeory-name: ", getCategoryName(item.category));
+    for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < apiController.playlists.length; i++) {
+        const item = apiController.playlists[i];   
+        console.log(`item: ${item} index: ${i}`);     
         const row = document.createElement("tr");
         row.setAttribute("id", "row-" + item.id);
         const audio_file = base_url + item.audio;
         row.innerHTML = `            
-                <td>${getCategoryName(item.category)}</td>
+                <td>${apiController.getCategoryName(item.category)}</td>
                 <td><button onclick="play_audio('${audio_file}')"> Play</button></td>
                 <td>${item.title}</td>
                 <td>${item.description}</td>
