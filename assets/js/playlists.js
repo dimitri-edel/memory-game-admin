@@ -362,7 +362,7 @@ function hideAddItemTable() {
     const add_item_table = document.getElementById("add_item_table");
     add_item_table.innerHTML = "";
     // Show the container with the button for adding items
-    document.getElementById("add-button-container").style.display = "flex";
+    document.getElementById("add-button-container").style.display = "inline";
 }
 
 async function addItem() {
@@ -489,39 +489,46 @@ async function getPlaylists() {
     if (filter === "" || filter === null) {
         filter = "none";
     }
-    const request = new Request(`${base_url}/playlist/get-all/${filter}/${api_key}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        }
+    let promise = apiController.getPlaylists(filter);
+    promise.then((data) => {
+        changePage(1);
+    }).catch((error) => {
+        console.log("Error loading playlists: ");
+        console.log(error);
     });
+    // const request = new Request(`${base_url}/playlist/get-all/${filter}/${api_key}`, {
+    //     method: "GET",
+    //     headers: {
+    //         "Content-Type": "application/json",
+    //     }
+    // });
 
-    fetch(request)
-        .then((response) => {            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            console.log(data);
-            // if playlists is not empty, clear it
-            if (playlists.length > 0) {
-                playlists = [];
-            }
-            data.forEach((item) => {
-                // add every item to reulstsJSON
-                playlists.push(item);
-            });
-            // If the playlists is not empty, show the first page
-            if (playlists.length > 0) {
-                // This function is in pagination.js
-                changePage(1);
-            }
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+    // fetch(request)
+    //     .then((response) => {            
+    //         if (!response.ok) {
+    //             throw new Error(`HTTP error! status: ${response.status}`);
+    //         }
+    //         return response.json();
+    //     })
+    //     .then((data) => {
+    //         console.log(data);
+    //         // if playlists is not empty, clear it
+    //         if (playlists.length > 0) {
+    //             playlists = [];
+    //         }
+    //         data.forEach((item) => {
+    //             // add every item to reulstsJSON
+    //             playlists.push(item);
+    //         });
+    //         // If the playlists is not empty, show the first page
+    //         if (playlists.length > 0) {
+    //             // This function is in pagination.js
+    //             changePage(1);
+    //         }
+    //     })
+    //     .catch((error) => {
+    //         console.log(error);
+    //     });
 }
 
 // Function that clicks on a hidden input file element and sets its visibility back to relative

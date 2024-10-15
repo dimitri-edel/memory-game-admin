@@ -60,13 +60,13 @@ function numPages() {
     // If the current page is the playlists page, return the number of pages for the playlists
     if (getPageName() == "playlists.html") {
         let num = Math.ceil(apiController.playlists.length / records_per_page);
-        if (num <= 0 ) {
+        if (num <= 0) {
             return 1;
         }
-        return num;    
+        return num;
     } else if (getPageName() == "categories.html") {
         let num = Math.ceil(apiController.categories.length / records_per_page);
-        if (num <= 0 ) {
+        if (num <= 0) {
             return 1;
         }
         return num;
@@ -85,8 +85,8 @@ window.onload = function () {
         }).catch((error) => {
             console.log("Error loading playlists: ");
             console.log(error);
-        });        
-    }else if (getPageName() == "categories.html") {
+        });
+    } else if (getPageName() == "categories.html") {
         let promise = apiController.getCategories();
         promise.then((data) => {
             loadCategories(1);
@@ -100,7 +100,7 @@ window.onload = function () {
         // setTimeout(() => {
         //     loadCategories(1);
         // }, 1000);
-    }    
+    }
 };
 // Load the paginated table in the playlists page
 function loadPlalists(page) {
@@ -126,8 +126,8 @@ function loadPlalists(page) {
     items.innerHTML = "";
 
     for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < apiController.playlists.length; i++) {
-        const item = apiController.playlists[i];   
-        console.log(`item: ${item} index: ${i}`);     
+        const item = apiController.playlists[i];
+        console.log(`item: ${item} index: ${i}`);
         const row = document.createElement("tr");
         row.setAttribute("id", "row-" + item.id);
         const audio_file = base_url + item.audio;
@@ -139,9 +139,22 @@ function loadPlalists(page) {
                 <td><img src="${base_url}${item.image}" alt="${item.title}" width="100"></td>
                 <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
                 <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
-            `;
+            `;        
         items.appendChild(row);
     }
+    const row_with_add_button = document.createElement("tr");
+    row_with_add_button.innerHTML = ` 
+                <td></td><td></td><td></td><td></td><td></td><td></td>
+                <td>
+                    <!-- Button for adding items -->
+                    <span id="add-button-container">        
+                        <span id="add-item-button" onclick="showAddItemTable()">
+                            <i class="fa-solid fa-square-plus add-button-icon"></i>
+                        </span>
+                    </span>
+                </td>`;
+    // Append the row with the add button to the table
+    items.appendChild(row_with_add_button);
 
     page_span.innerHTML = page;
     total_pages_span.innerHTML = numPages();
@@ -164,7 +177,7 @@ function loadPlalists(page) {
 }
 
 // Load the paginated table in the categories page
-function loadCategories(page) {    
+function loadCategories(page) {
     // If there are no items, return
     if (apiController.categories.length == 0) {
         console.log("No categories to load. categories_results is empty.");
@@ -185,7 +198,7 @@ function loadCategories(page) {
     const items = document.getElementById("listing-items");
     items.innerHTML = "";
 
-    for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < apiController.categories.length; i++) {       
+    for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < apiController.categories.length; i++) {
         const item = apiController.categories[i];
         console.log(`item: ${item} index: ${i}`);
         const row = document.createElement("tr");

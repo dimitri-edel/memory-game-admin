@@ -47,13 +47,13 @@ class ApiController {
         });    
         return name;
     }
-    
-    getPlaylists = () => {
-        let promise = new Promise((resolve, reject) => {
-            let filter = encodeURIComponent(document.getElementById("filter-field").value);
-            if (filter === "" || filter === null) {
-                filter = "none";
-            }
+
+    getPlaylists = (filter) => {
+        if(filter == null || filter == undefined){
+            filter = "none";
+        }
+
+        let promise = new Promise((resolve, reject) => {            
             const request = new Request(`${base_url}/playlist/get-all/${filter}/${api_key}`, {
                 method: "GET",
                 headers: {
@@ -69,12 +69,19 @@ class ApiController {
                     return response.json();
                 })
                 .then((data) => {
+                    // If the playlists array is not empty, clear it
+                    if (this.playlists.length > 0) {
+                        this.playlists = [];
+                    }
+                    // Add every playlist to the playlists array
                     data.forEach((item) => {
                         this.playlists.push(item);
                     });
+                    // Complete the promise
                     resolve(this.playlists);
                 })
                 .catch((error) => {
+                    // Reject the promise
                     reject(error);
                 });
 
