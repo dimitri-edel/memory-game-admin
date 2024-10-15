@@ -1,3 +1,5 @@
+let selected_item = null;
+
 function getItems() {
 
 }
@@ -96,8 +98,80 @@ function deleteItem(id) {
     });
 }
 
-function updateItem() {
+function editItem() {
+    let row = document.getElementById("row-" + item.id);
+    // Parse the item if it is a JSON string
+    if (typeof item === 'string') {
+        item = JSON.parse(item);
+    }
+    // If there is a selected item, unselect it
+    if (selected_item !== null) {
+        unselectItem(selected_item);
+    }
+    // Select the current item
+    selected_item = item;
 
+    row.innerHTML = `
+                <td><input type="text" id="edit_name" value="${item.name}"><br><span id="edit-name-validator"></span></td>
+                <td><input type="text" id="edit_description" value="${item.description}"><br><span id="edit-description-validator"></span></td>
+                <td><input type="file" id="edit_image" accept="image/*"><br><span id="edit-image-validator"></span></td>
+                <td><span class="update-button" onclick="updateItem(${item.id})"><i class="fa-solid fa-check button-icon"></i></span></td>
+                <td><span class="cancel-button" onclick="cancelEdit()"><i class="fa-solid fa-xmark button-icon"></i></span></td>
+            `;
+}
+
+function cancelEdit() {
+    let row = document.getElementById("row-" + selected_item.id);
+    row.innerHTML = `
+                <td>${selected_item.name}</td>
+                <td>${selected_item.description}</td>
+                <td><img src="${base_url}${selected_item.image}" width="100"></td>
+                <td><span class="edit-button" onclick="editItem(${selected_item.id})"><i class="fa-solid fa-pencil button-icon"></i></span></td>
+                <td><span class="delete-button" onclick="deleteItem(${selected_item.id})"><i class="fa-solid fa-trash button-icon"></i></span></td>
+            `;
+    selected_item = null;
+}
+
+function updateItem(id) {
+    const name = document.getElementById("edit_name").value;
+    const description = document.getElementById("edit_description").value;
+    const image = document.getElementById("edit_image").files[0];
+    validateForm();
+
+    let promise = apiController.updateCategory(id, { name, description, image });
+    promise.then((data) => {
+        // Update the item in the table
+        let row = document.getElementById("row-" + id);
+        const image_file_path = base_url + data.image;
+        row.innerHTML = `
+                <td>${data.name}</td>
+                <td>${data.description}</td>
+                <td><img src="${image_file_path}" width="100"></td>
+                <td><span class="edit-button" onclick="editItem(${data.id})"><i class="fa-solid fa-pencil button-icon"></i></span></td>
+                <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash button-icon"></i></span></td>
+            `;
+        selected_item = null;
+    }).catch((error) => {
+        console.log(error);
+    });
+
+    function validateForm() {
+        clearValidators();
+        if (name == "") {
+            document.getElementById("edit-name-validator").innerHTML = "Name is required";
+            return false;
+        }
+        if (description == "") {
+            document.getElementById("edit-description-validator").innerHTML = "Description is required";
+            return false;
+        }
+        return true;
+    }
+
+    function clearValidators() {
+        document.getElementById("edit-name-validator").innerHTML = "";
+        document.getElementById("edit-description-validator").innerHTML = "";
+    }
 }
 
 // Function to show the selected image

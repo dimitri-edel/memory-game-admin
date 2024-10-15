@@ -111,6 +111,7 @@ class ApiController {
         return promise;
     }
 
+    
     getCategoryName = (id) => {
         let name = "";
         this.categories.forEach((category) => {
