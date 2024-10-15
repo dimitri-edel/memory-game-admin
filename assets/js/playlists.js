@@ -321,42 +321,50 @@ async function deleteCategory() {
 }
 
 async function deleteItem(id) {
-    const token1 = getCookie("token1");
-    const token2 = getCookie("token2");
-
-    const request = new Request(`${base_url}/playlist/delete-item/${id}/`, {
-        method: "DELETE",
-        headers: new Headers({
-            "Content-Type": "application/json",
-            "token1": token1,
-            "token2": token2
-        })
+    let promise = apiController.deletePlaylist(id);
+    promise.then((data) => {
+        // Remove the item from the table
+        const row = document.getElementById("row-" + id);
+        row.remove();
+    }).catch((error) => {
+        console.log(error);
     });
+    // const token1 = getCookie("token1");
+    // const token2 = getCookie("token2");
 
-    fetch(request)
-        .then((response) => {
-            console.log(response);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return;
-        })
-        .then(() => {
-            // Remove the item from the playlists
-            playlists = playlists.filter(item => item.id !== id);
-            // Remove the item from the table
-            const row = document.getElementById("row-" + id);
-            row.remove();
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+    // const request = new Request(`${base_url}/playlist/delete-item/${id}/`, {
+    //     method: "DELETE",
+    //     headers: new Headers({
+    //         "Content-Type": "application/json",
+    //         "token1": token1,
+    //         "token2": token2
+    //     })
+    // });
 
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
-    }
+    // fetch(request)
+    //     .then((response) => {
+    //         console.log(response);
+    //         if (!response.ok) {
+    //             throw new Error(`HTTP error! status: ${response.status}`);
+    //         }
+    //         return;
+    //     })
+    //     .then(() => {
+    //         // Remove the item from the playlists
+    //         playlists = playlists.filter(item => item.id !== id);
+    //         // Remove the item from the table
+    //         const row = document.getElementById("row-" + id);
+    //         row.remove();
+    //     })
+    //     .catch((error) => {
+    //         console.log(error);
+    //     });
+
+    // function getCookie(name) {
+    //     const value = `; ${document.cookie}`;
+    //     const parts = value.split(`; ${name}=`);
+    //     if (parts.length === 2) return parts.pop().split(";").shift();
+    // }
 }
 
 // function for rendering categorie options
@@ -419,37 +427,14 @@ async function addItem() {
         return;
     }
 
-    const token1 = getCookie("token1");
-    const token2 = getCookie("token2");
-
-    const request = new Request(`${base_url}/playlist/post/`, {
-        method: "POST",
-        body: formData,
-        headers: new Headers({
-            "token1": token1,
-            "token2": token2
-        })
-    });
-
-    fetch(request)
-        .then((response) => {
-            console.log(response);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            console.log(data);
-            // Add the new item to the playlists
-            playlists.push(data);
-            // Add the new item to the table
-            const items = document.getElementById("listing-items");
-            const row = document.createElement("tr");
-            row.setAttribute("id", "row-" + data.id);
-            const audio_file = base_url + data.audio;
-            row.innerHTML = `
-                <td>${data.id}</td>
+    let promise = apiController.addPlaylist({ category, audio, title, description, image });
+    promise.then((data) => {        
+        // Add the new item to the table
+        const items = document.getElementById("listing-items");
+        const row = document.createElement("tr");
+        row.setAttribute("id", "row-" + data.id);
+        const audio_file = base_url + data.audio;
+        row.innerHTML = `                
                 <td>${getCategoryName(data.category)}</td>
                 <td><button onclick="play_audio('${audio_file}')"> Play</button></td>
                 <td>${data.title}</td>
@@ -458,26 +443,74 @@ async function addItem() {
                 <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
                 <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
             `;
-            items.appendChild(row);
-            // Hide the add item table
-            hideAddItemTable();
-            // Go to the last page
-            changePage(numPages());
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+        items.appendChild(row);
+        // Hide the add item table
+        hideAddItemTable();
+        // Go to the last page
+        changePage(numPages());
+    }).catch((error) => {
+        console.log(error);
+    });
 
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
-    }
+    // const token1 = getCookie("token1");
+    // const token2 = getCookie("token2");
+
+    // const request = new Request(`${base_url}/playlist/post/`, {
+    //     method: "POST",
+    //     body: formData,
+    //     headers: new Headers({
+    //         "token1": token1,
+    //         "token2": token2
+    //     })
+    // });
+
+    // fetch(request)
+    //     .then((response) => {
+    //         console.log(response);
+    //         if (!response.ok) {
+    //             throw new Error(`HTTP error! status: ${response.status}`);
+    //         }
+    //         return response.json();
+    //     })
+    //     .then((data) => {
+    //         console.log(data);
+    //         // Add the new item to the playlists
+    //         playlists.push(data);
+    //         // Add the new item to the table
+    //         const items = document.getElementById("listing-items");
+    //         const row = document.createElement("tr");
+    //         row.setAttribute("id", "row-" + data.id);
+    //         const audio_file = base_url + data.audio;
+    //         row.innerHTML = `
+    //             <td>${data.id}</td>
+    //             <td>${getCategoryName(data.category)}</td>
+    //             <td><button onclick="play_audio('${audio_file}')"> Play</button></td>
+    //             <td>${data.title}</td>
+    //             <td>${data.description}</td>
+    //             <td><img src="${base_url}${data.image}" alt="${data.title}" width="100"></td>
+    //             <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+    //             <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
+    //         `;
+    //         items.appendChild(row);
+    //         // Hide the add item table
+    //         hideAddItemTable();
+    //         // Go to the last page
+    //         changePage(numPages());
+    //     })
+    //     .catch((error) => {
+    //         console.log(error);
+    //     });
+
+    // function getCookie(name) {
+    //     const value = `; ${document.cookie}`;
+    //     const parts = value.split(`; ${name}=`);
+    //     if (parts.length === 2) return parts.pop().split(";").shift();
+    // }
     // function for validating the form before adding an item
     function validateForm() {
         // Clear the validators
         clearValidators();
-        const category = document.getElementById("add_category").value;
+        // Get the values of the form elements that need to be validated
         const audio = document.getElementById("add_audio").files[0];
         const title = document.getElementById("add_title").value;
         const description = document.getElementById("add_description").value;

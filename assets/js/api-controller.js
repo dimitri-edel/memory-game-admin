@@ -118,8 +118,8 @@ class ApiController {
                     }
                     return response.json();
                 })
-                .then((data) => {
-                    // Add the new item to the playlists
+                .then((data) => {                    
+                    // Add the new item to the playlists array
                     this.playlists.push(data);
                     resolve(data);
                 })
@@ -201,7 +201,7 @@ class ApiController {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json();
+                return;
             })
             .then((data) => {
                 // Remove the item from the playlists
