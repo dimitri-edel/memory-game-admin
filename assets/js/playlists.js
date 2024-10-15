@@ -45,7 +45,7 @@ function getCategoryName(id) {
         if (category.id === id) {
             name = category.name;
         }
-    });    
+    });
     return name;
 }
 
@@ -146,80 +146,116 @@ async function updateItem(id) {
     const row = document.getElementById("row-" + id);
     // Get the values of the selected item
     const category = row.querySelector("#update_category").value;
-    const audio = row.querySelector("#update_audio");
+    const audio_select = row.querySelector("#update_audio");
+    // If audio is not selected, the apiController will not update the audio file
+    let audio = null;
     const title = row.querySelector("#update_title").value;
     const description = row.querySelector("#update_description").value;
-    const image = row.querySelector("#update_image");
-    console.log(`updating category: ${category}`);
-    // Create a FormData object
-    const formData = new FormData();
-    // Add the values to the FormData object
-    formData.append("category", category);
-    // Check if a new audio file has been selected
-    if (audio.files.length > 0) {
-        formData.append("audio", audio.files[0]);
-    }
-    formData.append("title", title);
-    formData.append("description", description);
-    // Check if a new image file has been selected
-    if (image.files.length > 0) {
-        formData.append("image", image.files[0]);
-    }
+    const image_select = row.querySelector("#update_image");
+    // If image is not selected, the apiController will not update the image file
+    let image = null;
     // If the form is not valid, do nothing
     if (!validateForm()) {
         return;
     }
-    // Get the tokens from the cookies
-    const token1 = getCookie("token1");
-    const token2 = getCookie("token2");
-    // Create a request object
-    const request = new Request(`${base_url}/playlist/update-item/${id}/`, {
-        method: "PUT",
-        body: formData,
-        headers: new Headers({
-            "token1": token1,
-            "token2": token2
-        })
-    });
-    // Fetch the request
-    fetch(request)
-        .then((response) => {
-            console.log(response);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            // Update secelted_item with the new values
-            selected_item.category = data.category;
-            selected_item.audio = data.audio;
-            selected_item.title = data.title;
-            selected_item.description = data.description;
-            selected_item.image = data.image;
-            // If the response is successful, unselect the item
-            unselectItem(selected_item);
-            // Update the playlists
-            playlists = playlists.map(item => {
-                if (item.id === id) {
-                    item.category = data.category;
-                    item.audio = data.audio;
-                    item.title = data.title;
-                    item.description = data.description;
-                    item.image = data.image;
-                }
-                return item;
-            });
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
+    // Check if a new audio file has been selected
+    if (audio_select.files.length > 0) {
+         audio = audio_select.files[0];
     }
+
+    // Check if a new image file has been selected
+    if (image_select.files.length > 0) {
+        image = image_select.files[0];
+    }
+    // Create a promise to update the playlist
+    let promise = apiController.updatePlayist({ id, category, audio, title, description, image });
+    promise.then((data) => {
+        // Update secelted_item with the new values
+        selected_item.category = data.category;
+        selected_item.audio = data.audio;
+        selected_item.title = data.title;
+        selected_item.description = data.description;
+        selected_item.image = data.image;
+        // If the response is successful, unselect the item
+        unselectItem(selected_item);
+    }).catch((error) => {
+        console.log(error);
+
+    });
+
+
+
+
+
+    // // Create a FormData object
+    // const formData = new FormData();
+    // // Add the values to the FormData object
+    // formData.append("category", category);
+    // // Check if a new audio file has been selected
+    // if (audio.files.length > 0) {
+    //     formData.append("audio", audio.files[0]);
+    // }
+    // formData.append("title", title);
+    // formData.append("description", description);
+    // // Check if a new image file has been selected
+    // if (image.files.length > 0) {
+    //     formData.append("image", image.files[0]);
+    // }
+    // // If the form is not valid, do nothing
+    // if (!validateForm()) {
+    //     return;
+    // }
+    // // Get the tokens from the cookies
+    // const token1 = getCookie("token1");
+    // const token2 = getCookie("token2");
+    // // Create a request object
+    // const request = new Request(`${base_url}/playlist/update-item/${id}/`, {
+    //     method: "PUT",
+    //     body: formData,
+    //     headers: new Headers({
+    //         "token1": token1,
+    //         "token2": token2
+    //     })
+    // });
+    // // Fetch the request
+    // fetch(request)
+    //     .then((response) => {
+    //         console.log(response);
+    //         if (!response.ok) {
+    //             throw new Error(`HTTP error! status: ${response.status}`);
+    //         }
+    //         return response.json();
+    //     })
+    //     .then((data) => {
+    //         // Update secelted_item with the new values
+    //         selected_item.category = data.category;
+    //         selected_item.audio = data.audio;
+    //         selected_item.title = data.title;
+    //         selected_item.description = data.description;
+    //         selected_item.image = data.image;
+    //         // If the response is successful, unselect the item
+    //         unselectItem(selected_item);
+    //         // Update the playlists
+    //         playlists = playlists.map(item => {
+    //             if (item.id === id) {
+    //                 item.category = data.category;
+    //                 item.audio = data.audio;
+    //                 item.title = data.title;
+    //                 item.description = data.description;
+    //                 item.image = data.image;
+    //             }
+    //             return item;
+    //         });
+    //     })
+    //     .catch((error) => {
+    //         console.log(error);
+    //     });
+
+    // function getCookie(name) {
+    //     const value = `; ${document.cookie}`;
+    //     const parts = value.split(`; ${name}=`);
+    //     if (parts.length === 2) return parts.pop().split(";").shift();
+    // }
 
     function clearEditFormValidators() {
         document.getElementById("update-title-validator").innerHTML = "";
@@ -229,9 +265,9 @@ async function updateItem(id) {
     function validateForm() {
         // Clear the validators
         clearEditFormValidators();
-        
+
         const title = document.getElementById("update_title").value;
-        const description = document.getElementById("update_description").value;        
+        const description = document.getElementById("update_description").value;
 
         // Title may not exceed 30 characters and may not be empty
         if (title.length > 30 || title === "") {
@@ -326,7 +362,7 @@ async function deleteItem(id) {
 // function for rendering categorie options
 function renderCategoryOptions() {
     let options = "";
-    categories.forEach((category) => {
+    apiController.categories.forEach((category) => {
         options += `<option value="${category.id}">${category.name}</option>`;
     });
     return options;
@@ -371,7 +407,7 @@ async function addItem() {
     const title = document.getElementById("add_title").value;
     const description = document.getElementById("add_description").value;
     const image = document.getElementById("add_image").files[0];
-    console.log(`adding category: ${category}`);
+
     const formData = new FormData();
     formData.append("category", category);
     formData.append("audio", audio);
@@ -471,7 +507,7 @@ async function addItem() {
     }
 
     // Function for clearing the validator messages
-    function clearValidators() {        
+    function clearValidators() {
         document.getElementById("add-audio-validator").innerHTML = "";
         document.getElementById("add-title-validator").innerHTML = "";
         document.getElementById("add-description-validator").innerHTML = "";
