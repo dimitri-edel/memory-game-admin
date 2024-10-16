@@ -364,6 +364,7 @@ function showAddItemTable() {
          </tr>
         `;
 
+    // Set the innerHTML of the row
     row.innerHTML = ` 
             <td><select id="add_category">${renderCategoryOptions()}</seclect></td>
             <td><input type="file" id="add_audio" accept="audio/*"><br><span id="add-audio-validator" class="validator-message"></span></td>

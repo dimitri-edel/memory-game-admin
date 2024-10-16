@@ -140,7 +140,7 @@ function updateItem(id) {
     const image = document.getElementById("edit_image").files[0];
     validateForm();
 
-    let promise = apiController.updateCategory(id, { name, description, image });
+    let promise = apiController.updateCategory({id, name, description, image });
     promise.then((data) => {
         // Update the item in the table
         let row = document.getElementById("row-" + id);
@@ -149,7 +149,7 @@ function updateItem(id) {
                 <td>${data.name}</td>
                 <td>${data.description}</td>
                 <td><img src="${image_file_path}" width="100"></td>
-                <td><span class="edit-button" onclick="editItem(${data.id})"><i class="fa-solid fa-pencil button-icon"></i></span></td>
+                <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pencil button-icon"></i></span></td>
                 <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash button-icon"></i></span></td>
             `;
         selected_item = null;
