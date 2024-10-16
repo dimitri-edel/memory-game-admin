@@ -90,9 +90,13 @@ function editItem(item) {
                         <button value="Change" onclick="hideInitialFilename('intial_image_section', 'image-select')">Change</button>
                     </span>
                 </td>                
-                <td class="selected-row"><span class="update-button" onclick="updateItem(${item.id})"><i class="fa-solid fa-cloud-arrow-up button-icon"></i></span></td>
-                <td class="selected-row"><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
+                <td class="selected-row"><span class="update-button" onclick="updateItem(${item.id})"><i class="fa-solid fa-check button-icon"></i></span></td>
+                <td class="selected-row"><span class="cancel-button" onclick="cancelEdit()"><i class="fa-solid fa-xmark button-icon"></i></span></td>
             `;
+}
+
+function cancelEdit() {
+    unselectItem(selected_item);
 }
 
 // Function to show the selected image
@@ -160,7 +164,7 @@ async function updateItem(id) {
     }
     // Check if a new audio file has been selected
     if (audio_select.files.length > 0) {
-         audio = audio_select.files[0];
+        audio = audio_select.files[0];
     }
 
     // Check if a new image file has been selected
@@ -328,7 +332,7 @@ async function deleteItem(id) {
         row.remove();
     }).catch((error) => {
         console.log(error);
-    });    
+    });
 }
 
 // function for rendering categorie options
@@ -348,7 +352,7 @@ function showAddItemTable() {
 
     // Hide the container with the button for adding items
     document.getElementById("add-button-container").style.display = "none";
-    let html_headers= `<th>category</th>
+    let html_headers = `<th>category</th>
         <th>audio</th>
         <th>title</th>
         <th>description</th>
@@ -379,8 +383,11 @@ function showAddItemTable() {
 function hideAddItemTable() {
     const listing_table = document.getElementById("listing-table");
     // Remove the row with the id "add_item_row"
-    listing_table.removeChild(document.getElementById("add_item_row"));
-    
+    try { listing_table.removeChild(document.getElementById("add_item_row")); }
+    catch (e) {
+        return;
+    }
+
     // Show the container with the button for adding items
     document.getElementById("add-button-container").style.display = "inline";
 }
@@ -404,7 +411,7 @@ async function addItem() {
     }
 
     let promise = apiController.addPlaylist({ category, audio, title, description, image });
-    promise.then((data) => {        
+    promise.then((data) => {
         // Add the new item to the table
         const items = document.getElementById("listing-items");
         const row = document.createElement("tr");

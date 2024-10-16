@@ -105,8 +105,7 @@ window.onload = function () {
     }
 };
 // Load the paginated table in the playlists page
-function loadPlalists(page) {
-    console.log("loadPlalists() called");
+function loadPlalists(page) {    
     // If there are no items, return
     if (apiController.playlists.length == 0) {
         console.log("No playlists to load. playlists_results is empty.");

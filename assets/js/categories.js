@@ -28,7 +28,10 @@ function showAddItemTable() {
 function hideAddItemTable() {
     const listing_table = document.getElementById("listing-table");
     // Remove the row with the id "add_item_row"
-    listing_table.removeChild(document.getElementById("add_item_row"));
+    try { listing_table.removeChild(document.getElementById("add_item_row")); }
+    catch (e) {
+        return;
+    }
 
     // Show the container with the button for adding items
     document.getElementById("add-button-container").style.display = "inline";
@@ -112,11 +115,11 @@ function editItem(item) {
     selected_item = item;
 
     row.innerHTML = `
-                <td><input type="text" id="edit_name" value="${item.name}"><br><span id="edit-name-validator"></span></td>
-                <td><input type="text" id="edit_description" value="${item.description}"><br><span id="edit-description-validator"></span></td>
-                <td><input type="file" id="edit_image" accept="image/*"><br><span id="edit-image-validator"></span></td>
-                <td><span class="update-button" onclick="updateItem(${item.id})"><i class="fa-solid fa-check button-icon"></i></span></td>
-                <td><span class="cancel-button" onclick="cancelEdit()"><i class="fa-solid fa-xmark button-icon"></i></span></td>
+                <td class="selected-row"><input type="text" id="edit_name" value="${item.name}"><br><span id="edit-name-validator"></span></td>
+                <td class="selected-row"><input type="text" id="edit_description" value="${item.description}"><br><span id="edit-description-validator"></span></td>
+                <td class="selected-row"><input type="file" id="edit_image" accept="image/*"><br><span id="edit-image-validator"></span></td>
+                <td class="selected-row"><span class="update-button" onclick="updateItem(${item.id})"> <i class="fa-solid fa-check button-icon"></i></span></td>
+                <td class="selected-row"><span class="cancel-button" onclick="cancelEdit()"><i class="fa-solid fa-xmark button-icon"></i></span></td>
             `;
 }
 
@@ -126,8 +129,8 @@ function cancelEdit() {
                 <td>${selected_item.name}</td>
                 <td>${selected_item.description}</td>
                 <td><img src="${base_url}${selected_item.image}" width="100"></td>
-                <td><span class="edit-button" onclick='editItem(${JSON.stringify(selected_item)})'><i class="fa-solid fa-pencil button-icon"></i></span></td>
-                <td><span class="delete-button" onclick="deleteItem(${selected_item.id})"><i class="fa-solid fa-trash button-icon"></i></span></td>
+                <td><span class="edit-button" onclick='editItem(${JSON.stringify(selected_item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+                <td><span class="delete-button" onclick="deleteItem(${selected_item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
             `;
     selected_item = null;
 }
