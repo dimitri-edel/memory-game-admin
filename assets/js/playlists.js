@@ -89,7 +89,7 @@ function editItem(item) {
                         <img src="${base_url}${item.image}" alt="${item.title}" width="100">
                         <button value="Change" onclick="hideInitialFilename('intial_image_section', 'image-select')">Change</button>
                     </span>
-                </td>                
+                </td>                                
                 <td class="selected-row"><span class="update-button" onclick="updateItem(${item.id})"><i class="fa-solid fa-check button-icon"></i></span></td>
                 <td class="selected-row"><span class="cancel-button" onclick="cancelEdit()"><i class="fa-solid fa-xmark button-icon"></i></span></td>
             `;
@@ -359,7 +359,7 @@ function showAddItemTable() {
         <th>image</th>
         <th></th>
         <th></th>
-               
+        <th></th>       
         <tr>
          </tr>
         `;
@@ -370,6 +370,7 @@ function showAddItemTable() {
             <td><input type="text" id="add_title"><br><span id="add-title-validator" class="validator-message"></span></td>
             <td><input type="text" id="add_description"><br><span id="add-description-validator" class="validator-message"></span></td>
             <td><input type="file" id="add_image" accept="image/*"><br><span id="add-image-validator" class="validator-message"></span></td>
+            <td><input type="file" id="add_quiz" accept="application/JSON"><br><span id="add-quiz-validator" class="validator-message"></span></td>
             <td><span class="add-button" onclick="addItem()"><i class="fa-solid fa-cloud-arrow-down button-icon"></i></span></td>
             <td><span class="cancel-button" onclick="hideAddItemTable()"><i class="fa-solid fa-xmark button-icon"></i></span></td>       
     `;

@@ -106,9 +106,14 @@ window.onload = function () {
 };
 // Load the paginated table in the playlists page
 function loadPlalists(page) {    
+    // Append the items to the table
+    const items = document.getElementById("listing-items");
+    items.innerHTML = "";
+
     // If there are no items, return
     if (apiController.playlists.length == 0) {
         console.log("No playlists to load. playlists_results is empty.");
+        renderAddItemButton();
         return;
     }
     var btn_next = document.getElementById("btn_next");
@@ -122,40 +127,9 @@ function loadPlalists(page) {
     if (page < 1) page = 1;
     if (page > numPages()) page = numPages();
 
-    // Append the items to the table
-    const items = document.getElementById("listing-items");
-    items.innerHTML = "";
 
-    for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < apiController.playlists.length; i++) {
-        const item = apiController.playlists[i];
-        console.log(`item: ${item} index: ${i}`);
-        const row = document.createElement("tr");
-        row.setAttribute("id", "row-" + item.id);
-        const audio_file = base_url + item.audio;
-        row.innerHTML = `            
-                <td>${apiController.getCategoryName(item.category)}</td>
-                <td><button onclick="play_audio('${audio_file}')"> Play</button></td>
-                <td>${item.title}</td>
-                <td>${item.description}</td>
-                <td><img src="${base_url}${item.image}" alt="${item.title}" width="100"></td>
-                <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
-                <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
-            `;        
-        items.appendChild(row);
-    }
-    const row_with_add_button = document.createElement("tr");
-    row_with_add_button.innerHTML = ` 
-                <td></td><td></td><td></td><td></td><td></td><td></td>
-                <td>
-                    <!-- Button for adding items -->
-                    <span id="add-button-container">        
-                        <span id="add-item-button" onclick="showAddItemTable()">
-                            <i class="fa-solid fa-square-plus add-button-icon"></i>
-                        </span>
-                    </span>
-                </td>`;
-    // Append the row with the add button to the table
-    items.appendChild(row_with_add_button);
+    renderPlaylists();
+
 
     page_span.innerHTML = page;
     total_pages_span.innerHTML = numPages();
@@ -175,13 +149,54 @@ function loadPlalists(page) {
         btn_next.style.visibility = "visible";
         btn_last.style.visibility = "visible";
     }
+
+    function renderAddItemButton() {
+        const row_with_add_button = document.createElement("tr");
+        row_with_add_button.innerHTML = ` 
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td>
+                    <!-- Button for adding items -->
+                    <span id="add-button-container">        
+                        <span id="add-item-button" onclick="showAddItemTable()">
+                            <i class="fa-solid fa-square-plus add-button-icon"></i>
+                        </span>
+                    </span>
+                </td>`;
+        // Append the row with the add button to the table
+        items.appendChild(row_with_add_button);
+    }
+
+    function renderPlaylists() {
+        for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < apiController.playlists.length; i++) {
+            const item = apiController.playlists[i];
+            console.log(`item: ${item} index: ${i}`);
+            const row = document.createElement("tr");
+            row.setAttribute("id", "row-" + item.id);
+            const audio_file = base_url + item.audio;
+            row.innerHTML = `            
+                <td>${apiController.getCategoryName(item.category)}</td>
+                <td><button onclick="play_audio('${audio_file}')"> Play</button></td>
+                <td>${item.title}</td>
+                <td>${item.description}</td>
+                <td><img src="${base_url}${item.image}" alt="${item.title}" width="100"></td>
+                <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+                <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
+            `;
+            items.appendChild(row);
+        }
+    }
 }
 
 // Load the paginated table in the categories page
 function loadCategories(page) {
+    // Append the items to the table
+    const items = document.getElementById("listing-items");
+    items.innerHTML = "";
+
     // If there are no items, return
     if (apiController.categories.length == 0) {
         console.log("No categories to load. categories_results is empty.");
+        renderAddItemButton();
         return;
     }
     var btn_next = document.getElementById("btn_next");
@@ -195,27 +210,32 @@ function loadCategories(page) {
     if (page < 1) page = 1;
     if (page > numPages()) page = numPages();
 
-    // Append the items to the table
-    const items = document.getElementById("listing-items");
-    items.innerHTML = "";
 
-    for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < apiController.categories.length; i++) {
-        const item = apiController.categories[i];
-        console.log(`item: ${item} index: ${i}`);
-        const row = document.createElement("tr");
-        row.setAttribute("id", "row-" + item.id);
-        row.innerHTML = `            
-                <td>${item.name}</td>
-                <td>${item.description}</td>
-                <td><img src="${base_url}${item.image}" alt="${item.name}" width="100"></td> 
-                <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
-                <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>               
-            `;
-        items.appendChild(row);
+    renderCategories();
+
+
+    page_span.innerHTML = page;
+    total_pages_span.innerHTML = numPages();
+
+    if (page == 1) {
+        btn_prev.style.visibility = "hidden";
+        btn_first.style.visibility = "hidden";
+    } else {
+        btn_prev.style.visibility = "visible";
+        btn_first.style.visibility = "visible";
     }
 
-    const row_with_add_button = document.createElement("tr");
-    row_with_add_button.innerHTML = ` 
+    if (page == numPages()) {
+        btn_next.style.visibility = "hidden";
+        btn_last.style.visibility = "hidden";
+    } else {
+        btn_next.style.visibility = "visible";
+        btn_last.style.visibility = "visible";
+    }
+
+    function renderAddItemButton() {
+        const row_with_add_button = document.createElement("tr");
+        row_with_add_button.innerHTML = ` 
                 <td></td><td></td><td></td><td></td>
                 <td>
                     <!-- Button for adding items -->
@@ -225,25 +245,24 @@ function loadCategories(page) {
                         </span>
                     </span>
                 </td>`;
-    // Append the row with the add button to the table
-    items.appendChild(row_with_add_button);
-
-    page_span.innerHTML = page;
-    total_pages_span.innerHTML = numPages();
-
-    if (page == 1) {
-        btn_prev.style.visibility = "hidden";
-        btn_first.style.visibility = "hidden";
-    } else {
-        btn_prev.style.visibility = "visible";
-        btn_first.style.visibility = "visible";
+        // Append the row with the add button to the table
+        items.appendChild(row_with_add_button);
     }
 
-    if (page == numPages()) {
-        btn_next.style.visibility = "hidden";
-        btn_last.style.visibility = "hidden";
-    } else {
-        btn_next.style.visibility = "visible";
-        btn_last.style.visibility = "visible";
+    function renderCategories() {
+        for (var i = (page - 1) * records_per_page; i < (page * records_per_page) && i < apiController.categories.length; i++) {
+            const item = apiController.categories[i];
+            console.log(`item: ${item} index: ${i}`);
+            const row = document.createElement("tr");
+            row.setAttribute("id", "row-" + item.id);
+            row.innerHTML = `            
+                <td>${item.name}</td>
+                <td>${item.description}</td>
+                <td><img src="${base_url}${item.image}" alt="${item.name}" width="100"></td> 
+                <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+                <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>               
+            `;
+            items.appendChild(row);
+        }
     }
 }

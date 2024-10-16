@@ -37,7 +37,6 @@ function hideAddItemTable() {
     document.getElementById("add-button-container").style.display = "inline";
 }
 
-
 function addItem() {
     const name = document.getElementById("add_name").value;
     const description = document.getElementById("add_description").value;
