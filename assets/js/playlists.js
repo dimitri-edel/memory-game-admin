@@ -380,18 +380,6 @@ function showAddItemTable() {
     listing_table.appendChild(row);
 
 }
-// function for hiding the table with id="add_item_table"
-function hideAddItemTable() {
-    const listing_table = document.getElementById("listing-table");
-    // Remove the row with the id "add_item_row"
-    try { listing_table.removeChild(document.getElementById("add_item_row")); }
-    catch (e) {
-        return;
-    }
-
-    // Show the container with the button for adding items
-    document.getElementById("add-button-container").style.display = "inline";
-}
 
 async function addItem() {
     const category = document.getElementById("add_category").value;
@@ -425,7 +413,7 @@ async function addItem() {
         // Hide the add item table
         hideAddItemTable();
         // Go to the last page
-        changePage(numPages());
+        paginator.lastPage();
     }).catch((error) => {
         console.log(error);
     });
@@ -484,48 +472,65 @@ async function getPlaylists() {
     }
     let promise = apiController.getPlaylists(filter);
     promise.then((data) => {
-        changePage(1);
+        paginator.changePage(1);
     }).catch((error) => {
         console.log("Error loading playlists: ");
         console.log(error);
     });
-    // const request = new Request(`${base_url}/playlist/get-all/${filter}/${api_key}`, {
-    //     method: "GET",
-    //     headers: {
-    //         "Content-Type": "application/json",
-    //     }
-    // });
-
-    // fetch(request)
-    //     .then((response) => {            
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP error! status: ${response.status}`);
-    //         }
-    //         return response.json();
-    //     })
-    //     .then((data) => {
-    //         console.log(data);
-    //         // if playlists is not empty, clear it
-    //         if (playlists.length > 0) {
-    //             playlists = [];
-    //         }
-    //         data.forEach((item) => {
-    //             // add every item to reulstsJSON
-    //             playlists.push(item);
-    //         });
-    //         // If the playlists is not empty, show the first page
-    //         if (playlists.length > 0) {
-    //             // This function is in pagination.js
-    //             changePage(1);
-    //         }
-    //     })
-    //     .catch((error) => {
-    //         console.log(error);
-    //     });
 }
 
-// Function that clicks on a hidden input file element and sets its visibility back to relative
-// function input_file_click(id) {
-//     document.getElementById(id).click();
-//     document.getElementById(id).style = "display: relative";
-// }
+
+/* EVENT LISTINERS FOR THE PAGINATOR */
+
+function renderAddItemButton() {
+    const row_with_add_button = document.createElement("tr");
+    row_with_add_button.innerHTML = ` 
+                <td></td><td></td><td></td><td></td>
+                <td>
+                    <!-- Button for adding items -->
+                    <span id="add-button-container">        
+                        <span id="add-item-button" onclick="showAddItemTable()">
+                            <i class="fa-solid fa-square-plus add-button-icon"></i>
+                        </span>
+                    </span>
+                </td>`;
+    // Append the row with the add button to the table
+    items.appendChild(row_with_add_button);
+}
+
+function renderPlaylists({ first_index, last_index, ceiling }) {
+    for (i = first_index; i < last_index && i < ceiling; i++) {
+        const item = apiController.playlists[i];
+        console.log(`item: ${item} index: ${i}`);
+        const row = document.createElement("tr");
+        row.setAttribute("id", "row-" + item.id);
+        const audio_file = base_url + item.audio;
+        row.innerHTML = `            
+            <td>${apiController.getCategoryName(item.category)}</td>
+            <td><button onclick="play_audio('${audio_file}')"> Play</button></td>
+            <td>${item.title}</td>
+            <td>${item.description}</td>
+            <td><img src="${base_url}${item.image}" alt="${item.title}" width="100"></td>
+            <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+            <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
+        `;
+        items.appendChild(row);
+    }
+}
+
+// function for hiding the table with id="add_item_table"
+function hideAddItemTable() {
+    const listing_table = document.getElementById("listing-table");
+    // Remove the row with the id "add_item_row"
+    try { listing_table.removeChild(document.getElementById("add_item_row")); }
+    catch (e) {
+        return;
+    }
+
+    // Show the container with the button for adding items
+    document.getElementById("add-button-container").style.display = "inline";
+}
+
+paginator.addEventListener("on-change", hideAddItemTable);
+paginator.addEventListener("on-change", renderAddItemButton);
+paginator.addEventListener("on-change", renderPlaylists);

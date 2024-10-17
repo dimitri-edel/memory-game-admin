@@ -68,15 +68,7 @@ class Paginator {
             this.current_page--;
             this.changePage(this.current_page);
         }
-        // call the event listeners
-        this.onChangeEvent.forEach((callback) => {
-            // Get the first and last index of the records to be displayed
-            // Ceiling is the number of records in the array and must be 
-            // be supplied to the for-loop in the playlists.js and categories.js
-            // like so: i = first_index; i < last_index && i < ceiling; i++
-            const { first_index, last_index, ceiling } = this.getChangedIndexes();
-            callback({ first_index, last_index, ceiling });
-        });
+        
     }
 
     nextPage = () => {
@@ -90,15 +82,6 @@ class Paginator {
             this.current_page++;
             this.changePage(this.current_page);
         }
-        // call the event listeners
-        this.onChangeEvent.forEach((callback) => {
-            // Get the first and last index of the records to be displayed
-            // Ceiling is the number of records in the array and must be 
-            // be supplied to the for-loop in the playlists.js and categories.js
-            // like so: i = first_index; i < last_index && i < ceiling; i++
-            const { first_index, last_index, ceiling } = this.getChangedIndexes();
-            callback({ first_index, last_index, ceiling });
-        });
     }
 
     firstPage = () => {
@@ -109,16 +92,7 @@ class Paginator {
         selected_item = null;
 
         this.current_page = 1;
-        this.changePage(this.current_page);
-        // call the event listeners
-        this.onChangeEvent.forEach((callback) => {
-            // Get the first and last index of the records to be displayed
-            // Ceiling is the number of records in the array and must be 
-            // be supplied to the for-loop in the playlists.js and categories.js
-            // like so: i = first_index; i < last_index && i < ceiling; i++
-            const { first_index, last_index, ceiling } = this.getChangedIndexes();
-            callback({ first_index, last_index, ceiling });
-        });
+        this.changePage(this.current_page);        
     }
 
     lastPage = () => {
@@ -129,16 +103,7 @@ class Paginator {
         selected_item = null;
 
         this.current_page = numPages();
-        this.changePage(this.current_page);
-        // call the event listeners
-        this.onChangeEvent.forEach((callback) => {
-            // Get the first and last index of the records to be displayed
-            // Ceiling is the number of records in the array and must be 
-            // be supplied to the for-loop in the playlists.js and categories.js
-            // like so: i = first_index; i < last_index && i < ceiling; i++
-            const { first_index, last_index, ceiling } = this.getChangedIndexes();
-            callback({ first_index, last_index, ceiling });
-        });
+        this.changePage(this.current_page);        
     }
 
     numPages = () => {
@@ -167,7 +132,15 @@ class Paginator {
     changePage = (page) => {
         this.currentPage = page;
 
-
+        // call the event listeners
+        this.onChangeEvent.forEach((callback) => {
+            // Get the first and last index of the records to be displayed
+            // Ceiling is the number of records in the array and must be 
+            // be supplied to the for-loop in the playlists.js and categories.js
+            // like so: i = first_index; i < last_index && i < ceiling; i++
+            const { first_index, last_index, ceiling } = this.getChangedIndexes();
+            callback({ first_index, last_index, ceiling });
+        });
     }
 
 
@@ -187,3 +160,5 @@ class Paginator {
         return { first_index, last_index, ceiling };
     }
 }
+
+var paginator = new Paginator();
