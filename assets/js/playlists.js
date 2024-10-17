@@ -370,8 +370,7 @@ function showAddItemTable() {
             <td><input type="file" id="add_audio" accept="audio/*"><br><span id="add-audio-validator" class="validator-message"></span></td>
             <td><input type="text" id="add_title"><br><span id="add-title-validator" class="validator-message"></span></td>
             <td><input type="text" id="add_description"><br><span id="add-description-validator" class="validator-message"></span></td>
-            <td><input type="file" id="add_image" accept="image/*"><br><span id="add-image-validator" class="validator-message"></span></td>
-            <td><input type="file" id="add_quiz" accept="application/JSON"><br><span id="add-quiz-validator" class="validator-message"></span></td>
+            <td><input type="file" id="add_image" accept="image/*"><br><span id="add-image-validator" class="validator-message"></span></td>            
             <td><span class="add-button" onclick="addItem()"><i class="fa-solid fa-cloud-arrow-down button-icon"></i></span></td>
             <td><span class="cancel-button" onclick="hideAddItemTable()"><i class="fa-solid fa-xmark button-icon"></i></span></td>       
     `;
@@ -400,21 +399,13 @@ async function addItem() {
     const title = document.getElementById("add_title").value;
     const description = document.getElementById("add_description").value;
     const image = document.getElementById("add_image").files[0];
-    const quiz = document.getElementById("add_quiz").files[0];
-
-    // const formData = new FormData();
-    // formData.append("category", category);
-    // formData.append("audio", audio);
-    // formData.append("title", title);
-    // formData.append("description", description);
-    // formData.append("image", image);
 
     // If the form is not valid, do nothing
     if (!validateForm()) {
         return;
     }
 
-    let promise = apiController.addPlaylist({ category, audio, title, description, image, quiz });
+    let promise = apiController.addPlaylist({ category, audio, title, description, image });
     promise.then((data) => {
         // Add the new item to the table
         const items = document.getElementById("listing-items");
