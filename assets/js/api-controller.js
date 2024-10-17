@@ -224,15 +224,14 @@ class ApiController {
         return promise;
     }
 
-    addPlaylist = ({ category, audio, title, description, image, quiz }) => {
+    addPlaylist = ({ category, audio, title, description, image }) => {
         let promise = new Promise((resolve, reject) => {
             const formData = new FormData();
             formData.append("category", category);
             formData.append("audio", audio);
             formData.append("title", title);
             formData.append("description", description);
-            formData.append("image", image);
-            formData.append("quiz", quiz);
+            formData.append("image", image);            
 
             const token1 = this.getCookie("token1");
             const token2 = this.getCookie("token2");
