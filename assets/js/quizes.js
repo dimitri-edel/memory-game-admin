@@ -70,6 +70,76 @@ function addItem() {
     }
 }
 
+function editItem(item) {
+    // If there is a selected item, unselect it
+    if (selected_item !== null) {
+        unselectItem(selected_item);
+    }
+    selected_item = item;
+    const row = document.getElementById("row-" + item.id);
+    row.innerHTML = `
+        <td>
+            <select id="edit_category">
+                ${renderCategoryOptions()}
+            </select>
+        </td>
+        <td><input type="file" id="edit_json" accept="application/json" value="${item.json}"><span id="edit-json-validator" class="validator-message"></span></td>
+        <td><span class="save-button" onclick="saveItem(${item.id})"><i class="fa-solid fa-check button-icon"></i></span></td>
+        <td><span class="cancel-button" onclick="cancelEdit(${item.id})"><i class="fa-solid fa-xmark button-icon"></i></span></td>
+    `;
+    document.getElementById("edit_category").value = item.category;
+}
+
+function cancelEdit(id) {
+    const item = apiController.quizes.find(item => item.id === id);
+    const row = document.getElementById("row-" + id);
+    row.innerHTML = `
+        <td>${apiController.getCategoryName(item.category)}</td>
+        <td>${item.json}</td>
+        <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+        <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
+    `;
+    selected_item = null;
+}
+
+function saveItem(id) {
+    const category = document.getElementById("edit_category").value;
+    const json = document.getElementById("edit_json").files[0];
+    // If the form is not valid, do nothing
+    if (!validateForm()) {
+        return;
+    }
+    let promise = apiController.updateQuiz({ id, category, json_file: json });
+    promise.then((data) => {
+        // Update the item in the table
+        const row = document.getElementById("row-" + id);
+        row.innerHTML = `
+            <td>${apiController.getCategoryName(data.category)}</td>
+            <td>${data.json}</td>
+            <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+            <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
+        `;
+        // Unselect the item
+        unselectItem(data);
+    }).catch((error) => {
+        console.log(error);
+    });
+
+    function validateForm() {
+        clearValidators();
+        if (json === undefined) {
+            document.getElementById("edit-json-validator").innerHTML = "JSON file is required";
+            return false;
+        }
+        return true;
+    }
+
+    function clearValidators() {
+        document.getElementById("edit-json-validator").innerHTML = "";
+    }
+}
+
+
 function renderCategoryOptions() {
     let options = "";
     apiController.categories.forEach((category) => {
