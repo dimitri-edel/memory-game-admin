@@ -8,7 +8,7 @@ class ApiController {
 
     getCategories = () => {
         let promise = new Promise((resolve, reject) => {
-            const request = new Request(`${base_url}/playlist/category/get-all/${api_key}`, {
+            const request = new Request(`${base_url}/category/get-all/${api_key}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -39,17 +39,17 @@ class ApiController {
         return promise;
     }
 
-    addCategory = ({name, description, image}) => {
+    addCategory = ({ name, description, image }) => {
         let promise = new Promise((resolve, reject) => {
             const formData = new FormData();
             formData.append("name", name);
             formData.append("description", description);
-            if(image != null){formData.append("image", image);}
+            if (image != null) { formData.append("image", image); }
 
             const token1 = this.getCookie("token1");
             const token2 = this.getCookie("token2");
 
-            const request = new Request(`${base_url}/playlist/category/post/`, {
+            const request = new Request(`${base_url}/category/add/`, {
                 method: "POST",
                 body: formData,
                 headers: new Headers({
@@ -78,17 +78,17 @@ class ApiController {
         return promise;
     }
 
-    updateCategory = ({id, name, description, image }) => {
+    updateCategory = ({ id, name, description, image }) => {
         let promise = new Promise((resolve, reject) => {
             const formData = new FormData();
             formData.append("name", name);
             formData.append("description", description);
-            if(image != null){formData.append("image", image);}
+            if (image != null) { formData.append("image", image); }
 
             const token1 = this.getCookie("token1");
             const token2 = this.getCookie("token2");
 
-            const request = new Request(`${base_url}/playlist/category/put/${id}/`, {
+            const request = new Request(`${base_url}/category/update/${id}/`, {
                 method: "PUT",
                 body: formData,
                 headers: new Headers({
@@ -124,12 +124,12 @@ class ApiController {
         return promise;
     }
 
-    deleteCategory = (id) => { 
+    deleteCategory = (id) => {
         let promise = new Promise((resolve, reject) => {
             const token1 = this.getCookie("token1");
             const token2 = this.getCookie("token2");
 
-            const request = new Request(`${base_url}/playlist/category/delete/${id}/`, {
+            const request = new Request(`${base_url}/category/delete/${id}/`, {
                 method: "DELETE",
                 headers: new Headers({
                     "token1": token1,
@@ -156,7 +156,7 @@ class ApiController {
         });
         return promise;
     }
-    
+
 
     getCategoryName = (id) => {
         let name = "";
@@ -164,16 +164,16 @@ class ApiController {
             if (category.id === id) {
                 name = category.name;
             }
-        });    
+        });
         return name;
     }
 
     getPlaylists = (filter) => {
-        if(filter == null || filter == undefined){
+        if (filter == null || filter == undefined) {
             filter = "none";
         }
 
-        let promise = new Promise((resolve, reject) => {            
+        let promise = new Promise((resolve, reject) => {
             const request = new Request(`${base_url}/playlist/get-all/${filter}/${api_key}`, {
                 method: "GET",
                 headers: {
@@ -193,9 +193,24 @@ class ApiController {
                     if (this.playlists.length > 0) {
                         this.playlists = [];
                     }
+
                     // Add every playlist to the playlists array
                     data.forEach((item) => {
                         this.playlists.push(item);
+                        // Sample code for extracting json file from the server
+                        // fetch(`${base_url + item.quiz}`)
+                        //     .then(response => {
+                        //         if (!response.ok) {
+                        //             throw new Error(`HTTP error! status: ${response.status}`);
+                        //         }
+                        //         return response.json();
+                        //     })
+                        //     .then(data => {
+                        //         alert(data[0].question);
+                        //     })
+                        //     .catch(error => {
+                        //         console.error("Error loading playlists:", error);
+                        //     });
                     });
                     // Complete the promise
                     resolve(this.playlists);
@@ -222,7 +237,7 @@ class ApiController {
             const token1 = this.getCookie("token1");
             const token2 = this.getCookie("token2");
 
-            const request = new Request(`${base_url}/playlist/post/`, {
+            const request = new Request(`${base_url}/playlist/add/`, {
                 method: "POST",
                 body: formData,
                 headers: new Headers({
@@ -239,7 +254,7 @@ class ApiController {
                     }
                     return response.json();
                 })
-                .then((data) => {                    
+                .then((data) => {
                     // Add the new item to the playlists array
                     this.playlists.push(data);
                     resolve(data);
@@ -256,16 +271,16 @@ class ApiController {
         let promise = new Promise((resolve, reject) => {
             const formData = new FormData();
             formData.append("category", category);
-            if(audio != null){formData.append("audio", audio);}
+            if (audio != null) { formData.append("audio", audio); }
             formData.append("title", title);
             formData.append("description", description);
-            if(image != null){formData.append("image", image);}
+            if (image != null) { formData.append("image", image); }
 
             const token1 = this.getCookie("token1");
             const token2 = this.getCookie("token2");
 
             // Create a request object
-            const request = new Request(`${base_url}/playlist/update-item/${id}/`, {
+            const request = new Request(`${base_url}/playlist/update/${id}/`, {
                 method: "PUT",
                 body: formData,
                 headers: new Headers({
@@ -305,34 +320,34 @@ class ApiController {
 
     deletePlaylist = (id) => {
         let promise = new Promise((resolve, reject) => {
-        const token1 = this.getCookie("token1");
-        const token2 = this.getCookie("token2");
+            const token1 = this.getCookie("token1");
+            const token2 = this.getCookie("token2");
 
-        const request = new Request(`${base_url}/playlist/delete-item/${id}/`, {
-            method: "DELETE",
-            headers: new Headers({
-                "token1": token1,
-                "token2": token2
-            })
-        });
+            const request = new Request(`${base_url}/playlist/delete/${id}/`, {
+                method: "DELETE",
+                headers: new Headers({
+                    "token1": token1,
+                    "token2": token2
+                })
+            });
 
-        fetch(request)
-            .then((response) => {
-                console.log(response);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+            fetch(request)
+                .then((response) => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return;
+                })
+                .then((data) => {
+                    // Remove the item from the playlists
+                    this.playlists = this.playlists.filter(item => item.id !== id);
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
                 }
-                return;
-            })
-            .then((data) => {
-                // Remove the item from the playlists
-                this.playlists = this.playlists.filter(item => item.id !== id);
-                resolve(data);
-            })
-            .catch((error) => {
-                reject(error);
-            }
-            );
+                );
         });
         return promise;
     }
@@ -346,34 +361,34 @@ class ApiController {
 
     login({ username, password }) {
         let promise = new Promise((resolve, reject) => {
-        const request = new Request("http://localhost:8000/game_admin/login/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username: username, password: password }),
-        });
-
-        // const request2 = request.clone();
-
-       fetch(request)
-            .then((response) => { 
-                // print the response status code in the console
-                if(response.status !== 200){
-                    reject("Your username or password is incorrect");
-                }                
-                return response.json();
-            })
-            .then((data) => {
-                // Copy thoken1 and token2 from the data object to the cookie
-                // path=/ means that the cookie is available in the entire application
-                document.cookie = `token1=${data.token1}; path=/`;
-                document.cookie = `token2=${data.token2}; path=/`;
-                resolve(data);
-            })
-            .catch((error) => {
-                reject(error);
+            const request = new Request("http://localhost:8000/game_admin/login/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username: username, password: password }),
             });
+
+            // const request2 = request.clone();
+
+            fetch(request)
+                .then((response) => {
+                    // print the response status code in the console
+                    if (response.status !== 200) {
+                        reject("Your username or password is incorrect");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // Copy thoken1 and token2 from the data object to the cookie
+                    // path=/ means that the cookie is available in the entire application
+                    document.cookie = `token1=${data.token1}; path=/`;
+                    document.cookie = `token2=${data.token2}; path=/`;
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
         });
         return promise;
     }

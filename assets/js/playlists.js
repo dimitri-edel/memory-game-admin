@@ -400,19 +400,21 @@ async function addItem() {
     const title = document.getElementById("add_title").value;
     const description = document.getElementById("add_description").value;
     const image = document.getElementById("add_image").files[0];
+    const quiz = document.getElementById("add_quiz").files[0];
 
-    const formData = new FormData();
-    formData.append("category", category);
-    formData.append("audio", audio);
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("image", image);
+    // const formData = new FormData();
+    // formData.append("category", category);
+    // formData.append("audio", audio);
+    // formData.append("title", title);
+    // formData.append("description", description);
+    // formData.append("image", image);
+
     // If the form is not valid, do nothing
     if (!validateForm()) {
         return;
     }
 
-    let promise = apiController.addPlaylist({ category, audio, title, description, image });
+    let promise = apiController.addPlaylist({ category, audio, title, description, image, quiz });
     promise.then((data) => {
         // Add the new item to the table
         const items = document.getElementById("listing-items");
