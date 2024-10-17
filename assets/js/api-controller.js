@@ -355,7 +355,7 @@ class ApiController {
 
     getQuizes = () => {
         let promise = new Promise((resolve, reject) => {
-            const request = new Request(`${base_url}/quiz/get-all/${api_key}`, {
+            const request = new Request(`${base_url}/quiz/get-all/none/${api_key}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

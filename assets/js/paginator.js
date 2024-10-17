@@ -121,6 +121,12 @@ class Paginator {
                 return 1;
             }
             return num;
+        } else if (this.getPageName() == "quizes.html") {
+            let num = Math.ceil(apiController.quizes.length / this.records_per_page);
+            if (num <= 0) {
+                return 1;
+            }
+            return num;
         }
     }
 
@@ -158,6 +164,8 @@ class Paginator {
             ceiling = apiController.playlists.length;
         } else if (page_name == "categories.html") {
             ceiling = apiController.categories.length;
+        } else if (page_name == "quizes.html") {
+            ceiling = apiController.quizes.length;
         }
         return { first_index, last_index, ceiling };
     }
