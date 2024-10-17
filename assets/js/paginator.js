@@ -12,6 +12,7 @@ class Paginator {
         this.onChangeEvent = [];
     }
 
+
     addEventListener = (event, callback) => {
         /* Add event listeners 
             on-change event listeners will be executed when the page is changed
@@ -78,7 +79,7 @@ class Paginator {
         // Even if there is no item selected, the variable needs to be set to null
         selected_item = null;
 
-        if (this.current_page < numPages()) {
+        if (this.current_page < this.numPages()) {
             this.current_page++;
             this.changePage(this.current_page);
         }
@@ -109,13 +110,13 @@ class Paginator {
     numPages = () => {
         // If the current page is the playlists page, return the number of pages for the playlists
         if (this.getPageName() == "playlists.html") {
-            let num = Math.ceil(apiController.playlists.length / records_per_page);
+            let num = Math.ceil(apiController.playlists.length / this.records_per_page);
             if (num <= 0) {
                 return 1;
             }
             return num;
         } else if (this.getPageName() == "categories.html") {
-            let num = Math.ceil(apiController.categories.length / records_per_page);
+            let num = Math.ceil(apiController.categories.length / this.records_per_page);
             if (num <= 0) {
                 return 1;
             }
@@ -130,7 +131,8 @@ class Paginator {
     }
 
     changePage = (page) => {
-        this.currentPage = page;
+        this.current_page = page;
+        this.renderButtons();
 
         // call the event listeners
         this.onChangeEvent.forEach((callback) => {
@@ -150,7 +152,7 @@ class Paginator {
         // Ceiling is the number of records in the array and must be 
         // be supplied to the for-loop in the playlists.js and categories.js
         // like so: i = first_index; i < last_index && i < ceiling; i++
-        const ceiling = 0;
+        let ceiling = 0;
         const page_name = this.getPageName();
         if (page_name == "playlists.html") {
             ceiling = apiController.playlists.length;

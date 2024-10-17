@@ -29,6 +29,7 @@ class ApiController {
                     data.forEach((category) => {
                         // Add every category to the categories array
                         this.categories.push(category);
+                        console.log(this.categories);
                     });
                     resolve(this.categories);
                 }).catch((error) => {

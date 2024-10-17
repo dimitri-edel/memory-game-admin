@@ -483,9 +483,13 @@ async function getPlaylists() {
 /* EVENT LISTINERS FOR THE PAGINATOR */
 
 function renderAddItemButton() {
+    // Append the items to the table
+    const items = document.getElementById("listing-items");
+
+
     const row_with_add_button = document.createElement("tr");
     row_with_add_button.innerHTML = ` 
-                <td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td>
                 <td>
                     <!-- Button for adding items -->
                     <span id="add-button-container">        
@@ -494,11 +498,15 @@ function renderAddItemButton() {
                         </span>
                     </span>
                 </td>`;
-    // Append the row with the add button to the table
+    // Append the row with the add button to the table as its last child
     items.appendChild(row_with_add_button);
 }
 
 function renderPlaylists({ first_index, last_index, ceiling }) {
+    // Append the items to the table
+    const items = document.getElementById("listing-items");
+    items.innerHTML = "";
+
     for (i = first_index; i < last_index && i < ceiling; i++) {
         const item = apiController.playlists[i];
         console.log(`item: ${item} index: ${i}`);
@@ -516,6 +524,8 @@ function renderPlaylists({ first_index, last_index, ceiling }) {
         `;
         items.appendChild(row);
     }
+    // Append the add item button to the table
+    renderAddItemButton();
 }
 
 // function for hiding the table with id="add_item_table"
@@ -532,5 +542,15 @@ function hideAddItemTable() {
 }
 
 paginator.addEventListener("on-change", hideAddItemTable);
-paginator.addEventListener("on-change", renderAddItemButton);
 paginator.addEventListener("on-change", renderPlaylists);
+paginator.addEventListener("on-change", (selected_item) => { selected_item = null; });
+
+let categories_promise = apiController.getCategories();
+let playlist_promise = apiController.getPlaylists();
+
+Promise.all([categories_promise, playlist_promise]).then((values) => {
+    paginator.changePage(1);
+}).catch((error) => {
+    console.log("Error loading playlists: ");
+    console.log(error);
+});
