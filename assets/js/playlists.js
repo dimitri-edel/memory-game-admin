@@ -346,7 +346,7 @@ function renderCategoryOptions() {
 
 // function for appending the elements for adding an item to the table with id="add_item_table"
 function showAddItemTable() {
-    const listing_table = document.getElementById("listing-table");
+    const listing_table = document.getElementById("paginator-table");
     // Create new tr element
     const row = document.createElement("tr");
 
@@ -396,7 +396,7 @@ async function addItem() {
     let promise = apiController.addPlaylist({ category, audio, title, description, image });
     promise.then((data) => {
         // Add the new item to the table
-        const items = document.getElementById("listing-items");
+        const items = document.getElementById("paginator-table");
         const row = document.createElement("tr");
         row.setAttribute("id", "row-" + data.id);
         const audio_file = base_url + data.audio;
@@ -484,7 +484,7 @@ async function getPlaylists() {
 
 function renderAddItemButton() {
     // Append the items to the table
-    const items = document.getElementById("listing-items");
+    const items = document.getElementById("paginator-table");
 
 
     const row_with_add_button = document.createElement("tr");
@@ -504,7 +504,7 @@ function renderAddItemButton() {
 
 function renderPlaylists({ first_index, last_index, ceiling }) {
     // Append the items to the table
-    const items = document.getElementById("listing-items");
+    const items = document.getElementById("paginator-table");
     items.innerHTML = "";
 
     for (i = first_index; i < last_index && i < ceiling; i++) {
@@ -530,7 +530,7 @@ function renderPlaylists({ first_index, last_index, ceiling }) {
 
 // function for hiding the table with id="add_item_table"
 function hideAddItemTable() {
-    const listing_table = document.getElementById("listing-table");
+    const listing_table = document.getElementById("paginator-table");
     // Remove the row with the id "add_item_row"
     try { listing_table.removeChild(document.getElementById("add_item_row")); }
     catch (e) {

@@ -3,6 +3,7 @@ class ApiController {
     constructor() {
         this.categories = [];
         this.playlists = [];
+        this.quizes = [];
     }
 
 
@@ -352,6 +353,154 @@ class ApiController {
         return promise;
     }
 
+    getQuizes = () => {
+        let promise = new Promise((resolve, reject) => {
+            const request = new Request(`${base_url}/quiz/get-all/${api_key}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            fetch(request)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // If the quizes array is not empty, clear it
+                    if (this.quizes.length > 0) {
+                        this.quizes = [];
+                    }
+                    // Add every quiz to the quizes array
+                    data.forEach((item) => {
+                        this.quizes.push(item);
+                    });
+                    resolve(this.quizes);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return promise;
+    }
+
+    addQuiz = ({category, json_file}) => {
+        let promise = new Promise((resolve, reject) => {
+            const formData = new FormData();
+            formData.append("category", category);
+            formData.append("json", json_file);
+
+            const token1 = this.getCookie("token1");
+            const token2 = this.getCookie("token2");
+
+            const request = new Request(`${base_url}/quiz/add/`, {
+                method: "POST",
+                body: formData,
+                headers: new Headers({
+                    "token1": token1,
+                    "token2": token2
+                })
+            });
+
+            fetch(request)
+                .then((response) => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // Add the new item to the quizes array
+                    this.quizes.push(data);
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return promise;
+    }
+
+    updateQuiz = ({ id, category, json_file }) => {
+        let promise = new Promise((resolve, reject) => {
+            const formData = new FormData();
+            formData.append("category", category);
+            formData.append("json", json_file);
+
+            const token1 = this.getCookie("token1");
+            const token2 = this.getCookie("token2");
+
+            const request = new Request(`${base_url}/quiz/update/${id}/`, {
+                method: "PUT",
+                body: formData,
+                headers: new Headers({
+                    "token1": token1,
+                    "token2": token2
+                })
+            });
+
+            fetch(request)
+                .then((response) => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // Update the quizes
+                    this.quizes = this.quizes.map(item => {
+                        if (item.id === id) {
+                            item.category = data.category;
+                            item.json = data.json;
+                        }
+                        return item;
+                    });
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return promise;
+    }
+
+    deleteQuiz = (id) => {
+        let promise = new Promise((resolve, reject) => {
+            const token1 = this.getCookie("token1");
+            const token2 = this.getCookie("token2");
+
+            const request = new Request(`${base_url}/quiz/delete/${id}/`, {
+                method: "DELETE",
+                headers: new Headers({
+                    "token1": token1,
+                    "token2": token2
+                })
+            });
+
+            fetch(request)
+                .then((response) => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return;
+                })
+                .then((data) => {
+                    // Remove the item from the quizes
+                    this.quizes = this.quizes.filter(item => item.id !== id);
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return promise;
+    }
 
     getCookie = (name) => {
         const value = `; ${document.cookie}`;

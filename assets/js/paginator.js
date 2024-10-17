@@ -103,7 +103,7 @@ class Paginator {
         // Even if there is no item selected, the variable needs to be set to null
         selected_item = null;
 
-        this.current_page = numPages();
+        this.current_page = this.numPages();
         this.changePage(this.current_page);        
     }
 
