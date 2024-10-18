@@ -78,11 +78,7 @@ function editItem(item) {
     selected_item = item;
     const row = document.getElementById("row-" + item.id);
     row.innerHTML = `
-        <td>
-            <select id="edit_category">
-                ${renderCategoryOptions()}
-            </select>
-        </td>
+        <td>${apiController.getCategoryName(item.category)}</td>
         <td><input type="file" id="edit_json" accept="application/json" value="${item.json}"><span id="edit-json-validator" class="validator-message"></span></td>
         <td><span class="save-button" onclick="saveItem(${item.id})"><i class="fa-solid fa-check button-icon"></i></span></td>
         <td><span class="cancel-button" onclick="cancelEdit(${item.id})"><i class="fa-solid fa-xmark button-icon"></i></span></td>
@@ -93,12 +89,18 @@ function editItem(item) {
 function cancelEdit(id) {
     const item = apiController.quizes.find(item => item.id === id);
     const row = document.getElementById("row-" + id);
-    row.innerHTML = `
-        <td>${apiController.getCategoryName(item.category)}</td>
-        <td>${item.json}</td>
-        <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
-        <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
-    `;
+    // quiz_file_rendered is a promise that resolves to the HTML representation of the quiz
+    let quiz_file_rendered = renderQuiz(item);
+    quiz_file_rendered.then((html) => {
+        row.innerHTML = `
+            <td>${apiController.getCategoryName(item.category)}</td>
+            <td>${html}</td>
+            <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+            <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
+        `;
+    }).catch((error) => {
+        console.log(error);
+    });    
     selected_item = null;
 }
 
@@ -202,8 +204,9 @@ function renderQuizes({ first_index, last_index, ceiling }) {
 
         for (var i = first_index; i < last_index && i < ceiling; i++) {
             const item = apiController.quizes[i];
-            let quizFileRendered = renderQuiz(item);
-            promises.push(quizFileRendered.then((html) => {
+            // quiz_file_rendered is a promise that resolves to the HTML representation of the quiz
+            let quiz_file_rendered = renderQuiz(item);
+            promises.push(quiz_file_rendered.then((html) => {
                 const row = document.createElement("tr");
                 row.setAttribute("id", "row-" + item.id);
                 row.innerHTML = `            
