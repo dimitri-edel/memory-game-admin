@@ -192,36 +192,53 @@ function hideAddItemTable() {
 }
 
 function renderQuizes({ first_index, last_index, ceiling }) {
-    // Append the items to the table
-    const items = document.getElementById("paginator-table");
-    items.innerHTML = "";
-    
-    for (var i = first_index; i < last_index && i < ceiling; i++) {
-        const item = apiController.quizes[i];
-        let promise = renderQuiz(item);
-        promise.then((html) => {
-            const row = document.createElement("tr");
-            row.setAttribute("id", "row-" + item.id);
-            row.innerHTML = `            
+    /* Load the representation of the quizes in the paginated table  */
+    let list_for_paginator_rendered = new Promise((resolve, reject) => {
+        // Append the items to the table
+        const items = document.getElementById("paginator-table");
+        items.innerHTML = "";
+
+        let promises = [];
+
+        for (var i = first_index; i < last_index && i < ceiling; i++) {
+            const item = apiController.quizes[i];
+            let quizFileRendered = renderQuiz(item);
+            promises.push(quizFileRendered.then((html) => {
+                const row = document.createElement("tr");
+                row.setAttribute("id", "row-" + item.id);
+                row.innerHTML = `            
                 <td>${apiController.getCategoryName(item.category)}</td>
                 <td>${html}</td>
                 <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
                 <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
             `;
-            items.appendChild(row);
+                items.appendChild(row);
+            }).catch((error) => {
+                reject(error);
+            }));
+        }
+
+        Promise.all(promises).then(() => {
+            resolve();
         }).catch((error) => {
-            console.log(error);
-        });       
-    }
-    // Append the add item button to the table
-    renderAddItemButton();
+            reject(error);
+        });
+    });
+
+    list_for_paginator_rendered.then(() => {
+        // Append the add item button to the table
+        renderAddItemButton();
+    }).catch((error) => {
+        console.log(error);
+    });
 }
+
 
 function renderAddItemButton() {
     // Append the items to the table
     const items = document.getElementById("paginator-table");
 
-    const row_with_add_button = document.createElement("tr");
+    const row_with_add_button = document.createElement("tr");    
     row_with_add_button.innerHTML = ` 
             <td></td><td></td><td></td>
             <td>
@@ -236,8 +253,8 @@ function renderAddItemButton() {
     items.appendChild(row_with_add_button);
 }
 
-paginator.addEventListener("on-change", hideAddItemTable);
 paginator.addEventListener("on-change", renderQuizes);
+paginator.addEventListener("on-change", hideAddItemTable);
 paginator.addEventListener("on-change", (selected_item) => { selected_item = null; });
 
 let categories_promise = apiController.getCategories();
