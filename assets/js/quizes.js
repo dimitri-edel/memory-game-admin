@@ -14,6 +14,7 @@ function showAddItemTable() {
             <select id="add_category">
                 ${renderCategoryOptions()}
             </select>
+            <span id="add-category-validator" class="validator-message"></span>
         </td>
         <td><input type="file" id="add_json" accept="application/json"><span id="add-json-validator" class="validator-message"></span></td>
         <td><span class="add-button
@@ -37,8 +38,8 @@ function addItem() {
     if (!validateForm()) {
         return;
     }
-    let promise = apiController.addQuiz({ category, json_file: json });
-    promise.then((data) => {
+    let quiz_saved_in_database = apiController.addQuiz({ category, json_file: json });
+    quiz_saved_in_database.then((data) => {
         // Add the new item to the table
         const items = document.getElementById("paginator-table");
         const row = document.createElement("tr");
@@ -53,6 +54,9 @@ function addItem() {
         // Go to the last page
         paginator.changePage(paginator.numPages());
     }).catch((error) => {
+        if(error === "HTTP error! status: 409") {
+            document.getElementById("add-category-validator").innerHTML = "A Quiz for this Category alredy exists! Please choose another Category!";
+        }
         console.log(error);
     });
 
@@ -80,7 +84,7 @@ function editItem(item) {
     row.innerHTML = `
         <td>${apiController.getCategoryName(item.category)}</td>
         <td><input type="file" id="edit_json" accept="application/json" value="${item.json}"><span id="edit-json-validator" class="validator-message"></span></td>
-        <td><span class="save-button" onclick="saveItem(${item.id})"><i class="fa-solid fa-check button-icon"></i></span></td>
+        <td><span class="save-button" onclick="updateItem(${item.id})"><i class="fa-solid fa-check button-icon"></i></span></td>
         <td><span class="cancel-button" onclick="cancelEdit(${item.id})"><i class="fa-solid fa-xmark button-icon"></i></span></td>
     `;
     document.getElementById("edit_category").value = item.category;
@@ -104,7 +108,7 @@ function cancelEdit(id) {
     selected_item = null;
 }
 
-function saveItem(id) {
+function updateItem(id) {
     const category = document.getElementById("edit_category").value;
     const json = document.getElementById("edit_json").files[0];
     // If the form is not valid, do nothing
@@ -123,7 +127,7 @@ function saveItem(id) {
         `;
         // Unselect the item
         unselectItem(data);
-    }).catch((error) => {
+    }).catch((error) => {        
         console.log(error);
     });
 

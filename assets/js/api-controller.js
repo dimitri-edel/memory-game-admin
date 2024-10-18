@@ -395,7 +395,7 @@ class ApiController {
                 .then((response) => {
                     console.log(response);
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        reject(`HTTP error! status: ${response.status}`);
                     }
                     return response.json();
                 })
@@ -433,7 +433,7 @@ class ApiController {
                 .then((response) => {
                     console.log(response);
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        reject(`HTTP error! status: ${response.status}`);
                     }
                     return response.json();
                 })
