@@ -198,21 +198,7 @@ class ApiController {
 
                     // Add every playlist to the playlists array
                     data.forEach((item) => {
-                        this.playlists.push(item);
-                        // Sample code for extracting json file from the server
-                        // fetch(`${base_url + item.quiz}`)
-                        //     .then(response => {
-                        //         if (!response.ok) {
-                        //             throw new Error(`HTTP error! status: ${response.status}`);
-                        //         }
-                        //         return response.json();
-                        //     })
-                        //     .then(data => {
-                        //         alert(data[0].question);
-                        //     })
-                        //     .catch(error => {
-                        //         console.error("Error loading playlists:", error);
-                        //     });
+                        this.playlists.push(item);                        
                     });
                     // Complete the promise
                     resolve(this.playlists);

@@ -148,9 +148,40 @@ function renderCategoryOptions() {
     return options;
 }
 
+function deleteItem(id) {
+    let promise = apiController.deleteQuiz(id);
+    promise.then((data) => {
+        // Remove the item from the table
+        const row = document.getElementById("row-" + id);
+        row.remove();
+    }).catch((error) => {
+        console.log(error);
+    });
+}
+
+function renderQuiz(item) {
+    console.log(base_url + item.json);
+    console.log(item.json);
+    return new Promise((resolve, reject) => {
+        fetch(`${base_url + item.json}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                console.log(response.json);
+                return response.json();
+            })
+            .then(data => {
+                resolve(`<h5>${data[0].question}</h5><p>${data[0].answer}</p>`);
+            })
+            .catch(error => {
+                reject(`Error loading json-file for the quiz: ${item.json} : ${error}`);
+            });
+    });
+}
 /* EVENT LISTENERS FOR PAGINATOR  */
-function hideAddItemTable() { 
-    const listing_table = document.getElementById("paginator-table");   
+function hideAddItemTable() {
+    const listing_table = document.getElementById("paginator-table");
     // Remove the row with the id "add_item_row"
     try { listing_table.removeChild(document.getElementById("add_item_row")); }
     catch (e) {
@@ -167,16 +198,20 @@ function renderQuizes({ first_index, last_index, ceiling }) {
     
     for (var i = first_index; i < last_index && i < ceiling; i++) {
         const item = apiController.quizes[i];
-        console.log(`item: ${item} index: ${i}`);
-        const row = document.createElement("tr");
-        row.setAttribute("id", "row-" + item.id);
-        row.innerHTML = `            
-            <td>${apiController.getCategoryName(item.category)}</td>
-            <td>${item.json}</td>
-            <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
-            <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
-        `;
-        items.appendChild(row);
+        let promise = renderQuiz(item);
+        promise.then((html) => {
+            const row = document.createElement("tr");
+            row.setAttribute("id", "row-" + item.id);
+            row.innerHTML = `            
+                <td>${apiController.getCategoryName(item.category)}</td>
+                <td>${html}</td>
+                <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+                <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
+            `;
+            items.appendChild(row);
+        }).catch((error) => {
+            console.log(error);
+        });       
     }
     // Append the add item button to the table
     renderAddItemButton();
@@ -184,7 +219,7 @@ function renderQuizes({ first_index, last_index, ceiling }) {
 
 function renderAddItemButton() {
     // Append the items to the table
-    const items = document.getElementById("paginator-table");    
+    const items = document.getElementById("paginator-table");
 
     const row_with_add_button = document.createElement("tr");
     row_with_add_button.innerHTML = ` 
