@@ -177,10 +177,13 @@ function hideAddItemTable() {
     document.getElementById("add-button-container").style.display = "inline";
 }
 
-function renderQuizes({ first_index, last_index, ceiling }) {    
+function renderQuizes({ first_index, last_index, ceiling }) {  
+    console.log("renderQuizes");showAddItemTable  
         const items = document.getElementById("paginator-table");
         items.innerHTML = "";
-        
+        let quizes_loaded = apiController.getQuizes();
+        quizes_loaded.then((data) => {
+            console.log("the quizzes are: " + apiController.quizes);
         for (var i = first_index; i < last_index && i < ceiling; i++) {
             const item = apiController.quizes[i];
             console.log(item);
@@ -193,7 +196,10 @@ function renderQuizes({ first_index, last_index, ceiling }) {
                 <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
             `;
             items.appendChild(row);
-        }   
+        }  
+    }).catch((error) => {
+        console.log(error);
+    }); 
 }
 
 

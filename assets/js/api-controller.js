@@ -198,7 +198,7 @@ class ApiController {
 
                     // Add every playlist to the playlists array
                     data.forEach((item) => {
-                        this.playlists.push(item);                        
+                        this.playlists.push(item);
                     });
                     // Complete the promise
                     resolve(this.playlists);
@@ -219,7 +219,7 @@ class ApiController {
             formData.append("audio", audio);
             formData.append("title", title);
             formData.append("description", description);
-            formData.append("image", image);            
+            formData.append("image", image);
 
             const token1 = this.getCookie("token1");
             const token2 = this.getCookie("token2");
@@ -340,7 +340,7 @@ class ApiController {
     }
 
     getQuizes = () => {
-        let promise = new Promise((resolve, reject) => {
+        let fetchQuizes = new Promise((resolve, reject) => {
             const request = new Request(`${base_url}/quiz/get-all/none/${api_key}`, {
                 method: "GET",
                 headers: {
@@ -356,37 +356,47 @@ class ApiController {
                     return response.json();
                 })
                 .then((data) => {
-                    let promises = [];
                     // If the quizes array is not empty, clear it
                     if (this.quizes.length > 0) {
                         this.quizes = [];
                     }
                     // Add every quiz to the quizes array
                     data.forEach((item) => {
-                        let i = 0;
-                        console.log("count: ", ++i);
-                        let promise = this.fetchQuizJSONAsObject(base_url + item.json);
-                        promises.push(promise);  
-                        this.quizes.push(item);                      
-                    });
-                    Promise.all(promises).then((values) => {
-                        console.log(values);
-                        for (let i = 0; i < values.length; i++) {
-                            this.quizes[i].json = values[i];
-                        }
-                    resolve(this.quizes);      
-                    }).catch((error) => {
-                        reject(error);
-                    });              
-                })
-                .catch((error) => {
+                        this.quizes.push(item);
+                    });                    
+                    resolve();
+                }).catch((error) => {
                     reject(error);
                 });
+        })
+
+
+
+        let loadingQuizesComplete = new Promise((resolve, reject) => {
+            fetchQuizes.then(() => {
+                let promises = [];
+                this.quizes.forEach((quiz) => {
+                    promises.push(this.fetchQuizJSONAsObject(base_url + quiz.json, quiz));
+                });
+
+                Promise.all(promises)
+                    .then(() => {                        
+                        resolve();
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    });
+            }).catch((error) => {
+                reject(error);
+            }
+            );
         });
-        return promise;
+
+        return loadingQuizesComplete;
+
     }
-    
-    fetchQuizJSONAsObject (url) {
+
+    fetchQuizJSONAsObject(url, item) {
         return new Promise((resolve, reject) => {
             fetch(url)
                 .then(response => {
@@ -395,9 +405,9 @@ class ApiController {
                     }
                     return response.json();
                 })
-                .then(data => {
-                    console.log("fetchQuizJSONAsObject: ", data);
-                    resolve(data);
+                .then(data => {                   
+                    item.json = data;
+                    resolve();
                 })
                 .catch(error => {
                     reject(`Error loading json-file for the quiz: ${url} : ${error}`);
@@ -405,7 +415,7 @@ class ApiController {
         });
     }
 
-    addQuiz = ({category, json_file}) => {
+    addQuiz = ({ category, json_file }) => {
         let promise = new Promise((resolve, reject) => {
             const formData = new FormData();
             formData.append("category", category);
