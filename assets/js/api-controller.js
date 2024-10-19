@@ -356,21 +356,53 @@ class ApiController {
                     return response.json();
                 })
                 .then((data) => {
+                    let promises = [];
                     // If the quizes array is not empty, clear it
                     if (this.quizes.length > 0) {
                         this.quizes = [];
                     }
                     // Add every quiz to the quizes array
                     data.forEach((item) => {
-                        this.quizes.push(item);
+                        let i = 0;
+                        console.log("count: ", ++i);
+                        let promise = this.fetchQuizJSONAsObject(base_url + item.json);
+                        promises.push(promise);  
+                        this.quizes.push(item);                      
                     });
-                    resolve(this.quizes);
+                    Promise.all(promises).then((values) => {
+                        console.log(values);
+                        for (let i = 0; i < values.length; i++) {
+                            this.quizes[i].json = values[i];
+                        }
+                    resolve(this.quizes);      
+                    }).catch((error) => {
+                        reject(error);
+                    });              
                 })
                 .catch((error) => {
                     reject(error);
                 });
         });
         return promise;
+    }
+    
+    fetchQuizJSONAsObject (url) {
+        return new Promise((resolve, reject) => {
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        reject(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("fetchQuizJSONAsObject: ", data);
+                    resolve(data);
+                })
+                .catch(error => {
+                    reject(`Error loading json-file for the quiz: ${url} : ${error}`);
+                });
+        });
     }
 
     addQuiz = ({category, json_file}) => {

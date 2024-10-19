@@ -165,26 +165,6 @@ function deleteItem(id) {
     });
 }
 
-function renderQuiz(item) {
-    console.log(base_url + item.json);
-    console.log(item.json);
-    return new Promise((resolve, reject) => {
-        fetch(`${base_url + item.json}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                console.log(response.json);
-                return response.json();
-            })
-            .then(data => {
-                resolve(`<h5>${data[0].question}</h5><p>${data[0].answer}</p>`);
-            })
-            .catch(error => {
-                reject(`Error loading json-file for the quiz: ${item.json} : ${error}`);
-            });
-    });
-}
 /* EVENT LISTENERS FOR PAGINATOR  */
 function hideAddItemTable() {
     const listing_table = document.getElementById("paginator-table");
@@ -197,47 +177,23 @@ function hideAddItemTable() {
     document.getElementById("add-button-container").style.display = "inline";
 }
 
-function renderQuizes({ first_index, last_index, ceiling }) {
-    /* Load the representation of the quizes in the paginated table  */
-    let list_for_paginator_rendered = new Promise((resolve, reject) => {
-        // Append the items to the table
+function renderQuizes({ first_index, last_index, ceiling }) {    
         const items = document.getElementById("paginator-table");
         items.innerHTML = "";
-
-        let promises = [];
-
+        
         for (var i = first_index; i < last_index && i < ceiling; i++) {
             const item = apiController.quizes[i];
-            // quiz_file_rendered is a promise that resolves to the HTML representation of the quiz
-            let quiz_file_rendered = renderQuiz(item);
-            promises.push(quiz_file_rendered.then((html) => {
-                const row = document.createElement("tr");
-                row.setAttribute("id", "row-" + item.id);
-                row.innerHTML = `            
+            console.log(item);
+            const row = document.createElement("tr");
+            row.setAttribute("id", "row-" + item.id);
+            row.innerHTML = `            
                 <td>${apiController.getCategoryName(item.category)}</td>
-                <td>${html}</td>
+                <td>${item.json[0].question}</td>
                 <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
                 <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
             `;
-                items.appendChild(row);
-            }).catch((error) => {
-                reject(error);
-            }));
-        }
-
-        Promise.all(promises).then(() => {
-            resolve();
-        }).catch((error) => {
-            reject(error);
-        });
-    });
-
-    list_for_paginator_rendered.then(() => {
-        // Append the add item button to the table
-        renderAddItemButton();
-    }).catch((error) => {
-        console.log(error);
-    });
+            items.appendChild(row);
+        }   
 }
 
 
