@@ -537,8 +537,9 @@ class ApiController {
     }
 
     login({ username, password }) {
+        console.log(base_url);
         let promise = new Promise((resolve, reject) => {
-            const request = new Request("http://localhost:8000/game_admin/login/", {
+            const request = new Request(`${base_url}/game_admin/login/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
