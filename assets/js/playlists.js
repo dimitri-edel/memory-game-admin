@@ -187,80 +187,6 @@ async function updateItem(id) {
 
     });
 
-
-
-
-
-    // // Create a FormData object
-    // const formData = new FormData();
-    // // Add the values to the FormData object
-    // formData.append("category", category);
-    // // Check if a new audio file has been selected
-    // if (audio.files.length > 0) {
-    //     formData.append("audio", audio.files[0]);
-    // }
-    // formData.append("title", title);
-    // formData.append("description", description);
-    // // Check if a new image file has been selected
-    // if (image.files.length > 0) {
-    //     formData.append("image", image.files[0]);
-    // }
-    // // If the form is not valid, do nothing
-    // if (!validateForm()) {
-    //     return;
-    // }
-    // // Get the tokens from the cookies
-    // const token1 = getCookie("token1");
-    // const token2 = getCookie("token2");
-    // // Create a request object
-    // const request = new Request(`${base_url}/playlist/update-item/${id}/`, {
-    //     method: "PUT",
-    //     body: formData,
-    //     headers: new Headers({
-    //         "token1": token1,
-    //         "token2": token2
-    //     })
-    // });
-    // // Fetch the request
-    // fetch(request)
-    //     .then((response) => {
-    //         console.log(response);
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP error! status: ${response.status}`);
-    //         }
-    //         return response.json();
-    //     })
-    //     .then((data) => {
-    //         // Update secelted_item with the new values
-    //         selected_item.category = data.category;
-    //         selected_item.audio = data.audio;
-    //         selected_item.title = data.title;
-    //         selected_item.description = data.description;
-    //         selected_item.image = data.image;
-    //         // If the response is successful, unselect the item
-    //         unselectItem(selected_item);
-    //         // Update the playlists
-    //         playlists = playlists.map(item => {
-    //             if (item.id === id) {
-    //                 item.category = data.category;
-    //                 item.audio = data.audio;
-    //                 item.title = data.title;
-    //                 item.description = data.description;
-    //                 item.image = data.image;
-    //             }
-    //             return item;
-    //         });
-    //     })
-    //     .catch((error) => {
-    //         console.log(error);
-    //     });
-
-    // function getCookie(name) {
-    //     const value = `; ${document.cookie}`;
-    //     const parts = value.split(`; ${name}=`);
-    //     if (parts.length === 2) return parts.pop().split(";").shift();
-    // }
-
     function clearEditFormValidators() {
         document.getElementById("update-title-validator").innerHTML = "";
         document.getElementById("update-description-validator").innerHTML = "";
@@ -288,41 +214,41 @@ async function updateItem(id) {
     }
 }
 
-async function deleteCategory() {
-    const category = document.getElementById("delete_category").value;
-    const token1 = getCookie("token1");
-    const token2 = getCookie("token2");
+// async function deleteCategory() {
+//     const category = document.getElementById("delete_category").value;
+//     const token1 = getCookie("token1");
+//     const token2 = getCookie("token2");
 
-    const request = new Request(`${base_url}/playlist/delete-category/${category}/`, {
-        method: "DELETE",
-        headers: new Headers({
-            "Content-Type": "application/json",
-            "token1": token1,
-            "token2": token2
-        })
-    });
+//     const request = new Request(`${base_url}/playlist/delete-category/${category}/`, {
+//         method: "DELETE",
+//         headers: new Headers({
+//             "Content-Type": "application/json",
+//             "token1": token1,
+//             "token2": token2
+//         })
+//     });
 
-    fetch(request)
-        .then((response) => {
-            console.log(response);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            console.log(data);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+//     fetch(request)
+//         .then((response) => {
+//             console.log(response);
+//             if (!response.ok) {
+//                 throw new Error(`HTTP error! status: ${response.status}`);
+//             }
+//             return response.json();
+//         })
+//         .then((data) => {
+//             console.log(data);
+//         })
+//         .catch((error) => {
+//             console.log(error);
+//         });
 
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
-    }
-}
+//     function getCookie(name) {
+//         const value = `; ${document.cookie}`;
+//         const parts = value.split(`; ${name}=`);
+//         if (parts.length === 2) return parts.pop().split(";").shift();
+//     }
+// }
 
 async function deleteItem(id) {
     let promise = apiController.deletePlaylist(id);

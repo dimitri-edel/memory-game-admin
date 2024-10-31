@@ -76,9 +76,7 @@ function deleteItem(id) {
     let promise = apiController.deleteCategory(id);
     promise.then((data) => {
         // Remove the item from the table
-        document.getElementById("row-" + id).remove();
-        // Go to the last page
-        changePage(numPages());
+        document.getElementById("row-" + id).remove();        
     }).catch((error) => {
         console.log(error);
     });
