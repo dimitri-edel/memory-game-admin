@@ -39,19 +39,8 @@ function addItem() {
         return;
     }
     let quiz_saved_in_database = apiController.addQuiz({ category, json_file: json });
-    quiz_saved_in_database.then((data) => {
-        // Add the new item to the table
-        const items = document.getElementById("paginator-table");
-        const row = document.createElement("tr");
-        row.setAttribute("id", "row-" + data.id);
-        row.innerHTML = `
-            <td>${apiController.getCategoryName(data.category)}</td>
-            <td>${data.json}</td>
-            <td><span class="edit-button" onclick='editItem(${data.id})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
-            <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
-        `;
-        items.appendChild(row);
-        // Go to the last page
+    let quizes_loaded = apiController.getQuizes();
+    Promise.all([quiz_saved_in_database, quizes_loaded]).then((values) => {       
         paginator.changePage(paginator.numPages());
     }).catch((error) => {
         if (error === "HTTP error! status: 409") {
@@ -59,7 +48,7 @@ function addItem() {
         }
         console.log(error);
     });
-
+    
     function validateForm() {
         clearValidators();
         if (json === undefined) {
@@ -218,10 +207,10 @@ paginator.addEventListener("on-change", renderItems);
 paginator.addEventListener("on-change", hideAddItemTable);
 paginator.addEventListener("on-change", (selected_item) => { selected_item = null; });
 
-let categories_promise = apiController.getCategories();
-let playlist_promise = apiController.getQuizes();
+let categories_loaded = apiController.getCategories();
+let quizes_loaded = apiController.getQuizes();
 
-Promise.all([categories_promise, playlist_promise]).then((values) => {
+Promise.all([categories_loaded, quizes_loaded]).then((values) => {
     paginator.changePage(1);
 }).catch((error) => {
     console.log("Error loading quizes: ");
