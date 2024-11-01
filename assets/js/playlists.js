@@ -242,31 +242,14 @@ async function addItem() {
         return;
     }
 
-    let promise = apiController.addPlaylist({ category, audio, title, description, image });
-    promise.then((data) => {
-        // Add the new item to the table
-        const items = document.getElementById("paginator-table");
-        const row = document.createElement("tr");
-        row.setAttribute("id", "row-" + data.id);
-        const audio_file = base_url + data.audio;
-        row.innerHTML = `                
-                <td>${apiController.getCategoryName(data.category)}</td>
-                <td><button onclick="play_audio('${audio_file}')"> Play</button></td>
-                <td>${data.title}</td>
-                <td>${data.description}</td>
-                <td><img src="${base_url}${data.image}" alt="${data.title}" width="100"></td>
-                <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
-                <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
-            `;
-        items.appendChild(row);
-        // Hide the add item table
-        hideAddItemTable();
-        // Go to the last page
+    let playlist_added = apiController.addPlaylist({ category, audio, title, description, image });
+    let playlists_loaded = apiController.getPlaylists();
+    Promise.all([playlist_added, playlists_loaded]).then((values) => {
         paginator.lastPage();
     }).catch((error) => {
         console.log(error);
     });
-
+    
     // function for validating the form before adding an item
     function validateForm() {
         // Clear the validators

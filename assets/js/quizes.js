@@ -41,7 +41,7 @@ function addItem() {
     let quiz_saved_in_database = apiController.addQuiz({ category, json_file: json });
     let quizes_loaded = apiController.getQuizes();
     Promise.all([quiz_saved_in_database, quizes_loaded]).then((values) => {       
-        paginator.changePage(paginator.numPages());
+        paginator.lastPage();
     }).catch((error) => {
         if (error === "HTTP error! status: 409") {
             document.getElementById("add-category-validator").innerHTML = "A Quiz for this Category alredy exists! Please choose another Category!";

@@ -30,7 +30,7 @@ function addItem() {
     let category_added = apiController.addCategory({ name, description, image });
     let categories_loaded = apiController.getCategories();
     Promise.all([category_added, categories_loaded]).then((data) => {
-        paginator.changePage(paginator.numPages());
+        paginator.lastPage();
     }).catch((error) => {
         console.log(error);
     });
