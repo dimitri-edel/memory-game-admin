@@ -47,14 +47,14 @@ function addItem() {
         row.innerHTML = `
             <td>${apiController.getCategoryName(data.category)}</td>
             <td>${data.json}</td>
-            <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+            <td><span class="edit-button" onclick='editItem(${data.id})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
             <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
         `;
         items.appendChild(row);
         // Go to the last page
         paginator.changePage(paginator.numPages());
     }).catch((error) => {
-        if(error === "HTTP error! status: 409") {
+        if (error === "HTTP error! status: 409") {
             document.getElementById("add-category-validator").innerHTML = "A Quiz for this Category alredy exists! Please choose another Category!";
         }
         console.log(error);
@@ -74,7 +74,9 @@ function addItem() {
     }
 }
 
-function editItem(item) {
+function editItem(quiz_id) {
+    // Extract the quiz item from the quizes array
+    const item = apiController.quizes.find(item => item.id === quiz_id);
     // If there is a selected item, unselect it
     if (selected_item !== null) {
         unselectItem(selected_item);
@@ -82,52 +84,47 @@ function editItem(item) {
     selected_item = item;
     const row = document.getElementById("row-" + item.id);
     row.innerHTML = `
-        <td>${apiController.getCategoryName(item.category)}</td>
+        <td>${apiController.getCategoryName(item.category)}<span id="edit_category" hidden>${item.category}</span></td>
         <td><input type="file" id="edit_json" accept="application/json" value="${item.json}"><span id="edit-json-validator" class="validator-message"></span></td>
         <td><span class="save-button" onclick="updateItem(${item.id})"><i class="fa-solid fa-check button-icon"></i></span></td>
         <td><span class="cancel-button" onclick="cancelEdit(${item.id})"><i class="fa-solid fa-xmark button-icon"></i></span></td>
-    `;
-    document.getElementById("edit_category").value = item.category;
+    `;    
 }
 
 function cancelEdit(id) {
     const item = apiController.quizes.find(item => item.id === id);
     const row = document.getElementById("row-" + id);
-    // quiz_file_rendered is a promise that resolves to the HTML representation of the quiz
-    let quiz_file_rendered = renderQuiz(item);
-    quiz_file_rendered.then((html) => {
-        row.innerHTML = `
+
+    row.innerHTML = `
             <td>${apiController.getCategoryName(item.category)}</td>
-            <td>${html}</td>
-            <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+            <td>${item.json[0].question}<br>${item.json[0].answer}</td>
+            <td><span class="edit-button" onclick='editItem(${item.id})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
             <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
         `;
-    }).catch((error) => {
-        console.log(error);
-    });    
+
     selected_item = null;
 }
 
-function updateItem(id) {
+function updateItem(quiz_id) {
     const category = document.getElementById("edit_category").value;
     const json = document.getElementById("edit_json").files[0];
     // If the form is not valid, do nothing
     if (!validateForm()) {
         return;
     }
-    let promise = apiController.updateQuiz({ id, category, json_file: json });
+    let promise = apiController.updateQuiz({ quiz_id, category, json_file: json });
     promise.then((data) => {
         // Update the item in the table
-        const row = document.getElementById("row-" + id);
+        const row = document.getElementById("row-" + quiz_id);
         row.innerHTML = `
             <td>${apiController.getCategoryName(data.category)}</td>
             <td>${data.json}</td>
-            <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+            <td><span class="edit-button" onclick='editItem(${data.id})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
             <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
         `;
         // Unselect the item
         unselectItem(data);
-    }).catch((error) => {        
+    }).catch((error) => {
         console.log(error);
     });
 
@@ -177,29 +174,24 @@ function hideAddItemTable() {
     document.getElementById("add-button-container").style.display = "inline";
 }
 
-function renderQuizes({ first_index, last_index, ceiling }) {  
-    console.log("renderQuizes");showAddItemTable  
-        const items = document.getElementById("paginator-table");
-        items.innerHTML = "";
-        let quizes_loaded = apiController.getQuizes();
-        quizes_loaded.then((data) => {
-            console.log("the quizzes are: " + apiController.quizes);
-        for (var i = first_index; i < last_index && i < ceiling; i++) {
-            const item = apiController.quizes[i];
-            console.log(item);
-            const row = document.createElement("tr");
-            row.setAttribute("id", "row-" + item.id);
-            row.innerHTML = `            
+function renderItems({ first_index, last_index, ceiling }) {
+    const items = document.getElementById("paginator-table");
+    items.innerHTML = "";
+
+    for (var i = first_index; i < last_index && i < ceiling; i++) {
+        const item = apiController.quizes[i];
+        console.log(item);
+        const row = document.createElement("tr");
+        row.setAttribute("id", "row-" + item.id);
+        row.innerHTML = `            
                 <td>${apiController.getCategoryName(item.category)}</td>
-                <td>${item.json[0].question}</td>
-                <td><span class="edit-button" onclick='editItem(${JSON.stringify(item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
+                <td>${item.json[0].question}<br>${item.json[0].answer}</td>
+                <td><span class="edit-button" onclick='editItem(${item.id})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
                 <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
             `;
-            items.appendChild(row);
-        }  
-    }).catch((error) => {
-        console.log(error);
-    }); 
+        items.appendChild(row);
+    }
+    renderAddItemButton();
 }
 
 
@@ -207,7 +199,7 @@ function renderAddItemButton() {
     // Append the items to the table
     const items = document.getElementById("paginator-table");
 
-    const row_with_add_button = document.createElement("tr");    
+    const row_with_add_button = document.createElement("tr");
     row_with_add_button.innerHTML = ` 
             <td></td><td></td><td></td>
             <td>
@@ -222,7 +214,7 @@ function renderAddItemButton() {
     items.appendChild(row_with_add_button);
 }
 
-paginator.addEventListener("on-change", renderQuizes);
+paginator.addEventListener("on-change", renderItems);
 paginator.addEventListener("on-change", hideAddItemTable);
 paginator.addEventListener("on-change", (selected_item) => { selected_item = null; });
 

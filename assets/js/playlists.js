@@ -1,53 +1,12 @@
 // The playlists variable is used in pagination.js
-var playlists = [];
+// var playlists = [];
 // The array of all categories
-var categories = [];
+// var categories = [];
 // The selected_itme variable signifies the item that is currently selected
 var selected_item = null;
 // The boolean variables is_image_selected and is_audio_selected are used to check if an image or audio file has been selected
 var is_image_selected = false;
 var is_audio_selected = false;
-
-// Function to get all categories
-function getCategories() {
-    const request = new Request(`${base_url}/playlist/category/get-all/${api_key}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        }
-    });
-
-    fetch(request)
-        .then((response) => {
-            console.log(response);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            // If the categories array is not empty, clear it
-            if (categories.length > 0) {
-                categories = [];
-            }
-            data.forEach((category) => {
-                // Add every category to the categories array
-                categories.push(category);
-            })
-        }).catch((error) => {
-            console.log(error);
-        });
-}
-// Get the name of the category by its id
-function getCategoryName(id) {
-    let name = "";
-    categories.forEach((category) => {
-        if (category.id === id) {
-            name = category.name;
-        }
-    });
-    return name;
-}
 
 function editItem(item) {
     let row = document.getElementById("row-" + item.id);
@@ -125,7 +84,7 @@ function unselectItem(item) {
     is_audio_selected = false;
 
     row.innerHTML = `                
-                <td>${getCategoryName(item.category)}</td>
+                <td>${apiController.getCategoryName(item.category)}</td>
                 <td><button onclick="play_audio('${base_url}${item.audio}')"> Play</button></td>
                 <td>${item.title}</td>
                 <td>${item.description}</td>
@@ -214,42 +173,6 @@ async function updateItem(id) {
     }
 }
 
-// async function deleteCategory() {
-//     const category = document.getElementById("delete_category").value;
-//     const token1 = getCookie("token1");
-//     const token2 = getCookie("token2");
-
-//     const request = new Request(`${base_url}/playlist/delete-category/${category}/`, {
-//         method: "DELETE",
-//         headers: new Headers({
-//             "Content-Type": "application/json",
-//             "token1": token1,
-//             "token2": token2
-//         })
-//     });
-
-//     fetch(request)
-//         .then((response) => {
-//             console.log(response);
-//             if (!response.ok) {
-//                 throw new Error(`HTTP error! status: ${response.status}`);
-//             }
-//             return response.json();
-//         })
-//         .then((data) => {
-//             console.log(data);
-//         })
-//         .catch((error) => {
-//             console.log(error);
-//         });
-
-//     function getCookie(name) {
-//         const value = `; ${document.cookie}`;
-//         const parts = value.split(`; ${name}=`);
-//         if (parts.length === 2) return parts.pop().split(";").shift();
-//     }
-// }
-
 async function deleteItem(id) {
     let promise = apiController.deletePlaylist(id);
     promise.then((data) => {
@@ -327,7 +250,7 @@ async function addItem() {
         row.setAttribute("id", "row-" + data.id);
         const audio_file = base_url + data.audio;
         row.innerHTML = `                
-                <td>${getCategoryName(data.category)}</td>
+                <td>${apiController.getCategoryName(data.category)}</td>
                 <td><button onclick="play_audio('${audio_file}')"> Play</button></td>
                 <td>${data.title}</td>
                 <td>${data.description}</td>
@@ -428,7 +351,7 @@ function renderAddItemButton() {
     items.appendChild(row_with_add_button);
 }
 
-function renderPlaylists({ first_index, last_index, ceiling }) {
+function renderItems({ first_index, last_index, ceiling }) {
     // Append the items to the table
     const items = document.getElementById("paginator-table");
     items.innerHTML = "";
@@ -468,7 +391,7 @@ function hideAddItemTable() {
 }
 
 paginator.addEventListener("on-change", hideAddItemTable);
-paginator.addEventListener("on-change", renderPlaylists);
+paginator.addEventListener("on-change", renderItems);
 paginator.addEventListener("on-change", (selected_item) => { selected_item = null; });
 
 let categories_promise = apiController.getCategories();

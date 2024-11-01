@@ -221,7 +221,7 @@ function hideAddItemTable() {
     document.getElementById("add-button-container").style.display = "inline";
 }
 
-function renderCategories({ first_index, last_index, ceiling }) {
+function renderItems({ first_index, last_index, ceiling }) {
     // Append the items to the table
     const items = document.getElementById("paginator-table");
     items.innerHTML = "";
@@ -245,7 +245,7 @@ function renderCategories({ first_index, last_index, ceiling }) {
 }
 
 // Add event listeners for the paginator
-paginator.addEventListener("on-change", renderCategories);
+paginator.addEventListener("on-change", renderItems);
 paginator.addEventListener("on-change", hideAddItemTable);
 paginator.addEventListener("on-change", (selected_item) => { selected_item = null; });
 
