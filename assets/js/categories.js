@@ -27,23 +27,10 @@ function addItem() {
     const image = document.getElementById("add_image").files[0];
     validateForm();
 
-    let promise = apiController.addCategory({ name, description, image });
-    promise.then((data) => {
-        // Add the new item to the table
-        const items = document.getElementById("paginator-table");
-        const row = document.createElement("tr");
-        row.setAttribute("id", "row-" + data.id);
-        const image_file_path = base_url + data.image;
-        row.innerHTML = `
-        <td>${data.name}</td>
-        <td>${data.description}</td>
-        <td><img src="${image_file_path}" width="100"></td>
-        <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pencil button-icon"></i></span></td>
-        <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash button-icon"></i></span></td>
-        `;
-        items.appendChild(row);
-        // Go to the last page
-        changePage(numPages());
+    let category_added = apiController.addCategory({ name, description, image });
+    let categories_loaded = apiController.getCategories();
+    Promise.all([category_added, categories_loaded]).then((data) => {
+        paginator.changePage(paginator.numPages());
     }).catch((error) => {
         console.log(error);
     });
