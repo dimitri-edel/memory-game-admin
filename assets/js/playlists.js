@@ -1,7 +1,3 @@
-// The playlists variable is used in pagination.js
-// var playlists = [];
-// The array of all categories
-// var categories = [];
 // The selected_itme variable signifies the item that is currently selected
 var selected_item = null;
 // The boolean variables is_image_selected and is_audio_selected are used to check if an image or audio file has been selected
@@ -55,7 +51,9 @@ function editItem(item) {
 }
 
 function cancelEdit() {
-    unselectItem(selected_item);
+    // unselectItem(selected_item);
+    selected_item = null;
+    paginator.changePage(paginator.current_page);
 }
 
 // Function to show the selected image

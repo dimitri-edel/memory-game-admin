@@ -60,11 +60,14 @@ function addItem() {
 }
 
 function deleteItem(id) {
-    let promise = apiController.deleteCategory(id);
-    promise.then((data) => {
-        // Remove the item from the table
-        document.getElementById("row-" + id).remove();        
+    let page_number = paginator.current_page;
+    let category_deleted = apiController.deleteCategory(id);
+    category_deleted.then((data) => {        
+        paginator.changePage(page_number);  
     }).catch((error) => {
+        if(error.message.includes("401")) {
+            alert("You are not authorized to delete this item!");
+        }    
         console.log(error);
     });
 }
@@ -74,11 +77,7 @@ function editItem(item) {
     // Parse the item if it is a JSON string
     if (typeof item === 'string') {
         item = JSON.parse(item);
-    }
-    // If there is a selected item, unselect it
-    if (selected_item !== null) {
-        unselectItem(selected_item);
-    }
+    }    
     // Select the current item
     selected_item = item;
 
@@ -92,15 +91,8 @@ function editItem(item) {
 }
 
 function cancelEdit() {
-    let row = document.getElementById("row-" + selected_item.id);
-    row.innerHTML = `
-    <td>${selected_item.name}</td>
-    <td>${selected_item.description}</td>
-    <td><img src="${base_url}${selected_item.image}" width="100"></td>
-    <td><span class="edit-button" onclick='editItem(${JSON.stringify(selected_item)})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
-    <td><span class="delete-button" onclick="deleteItem(${selected_item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
-    `;
     selected_item = null;
+    paginator.changePage(paginator.current_page);
 }
 
 function updateItem(id) {
@@ -109,23 +101,15 @@ function updateItem(id) {
     const image = document.getElementById("edit_image").files[0];
     validateForm();
 
-    let promise = apiController.updateCategory({ id, name, description, image });
-    promise.then((data) => {
-        // Update the item in the table
-        let row = document.getElementById("row-" + id);
-        const image_file_path = base_url + data.image;
-        row.innerHTML = `
-        <td>${data.name}</td>
-        <td>${data.description}</td>
-        <td><img src="${image_file_path}" width="100"></td>
-        <td><span class="edit-button" onclick='editItem(${JSON.stringify(data)})'><i class="fa-solid fa-pencil button-icon"></i></span></td>
-        <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash button-icon"></i></span></td>
-        `;
+    let category_updated = apiController.updateCategory({ id, name, description, image });
+    category_updated.then((data) => {
         selected_item = null;
+        paginator.changePage(paginator.current_page);
     }).catch((error) => {
+        alert(error.message);
         console.log(error);
     });
-
+    
     function validateForm() {
         clearValidators();
         if (name == "") {
@@ -236,8 +220,8 @@ paginator.addEventListener("on-change", renderItems);
 paginator.addEventListener("on-change", hideAddItemTable);
 paginator.addEventListener("on-change", (selected_item) => { selected_item = null; });
 
-let promise = apiController.getCategories();
-promise.then((data) => {
+let categories_loaded = apiController.getCategories();
+categories_loaded.then((data) => {
     paginator.changePage(1);
 }).catch((error) => {
     console.log(error);
