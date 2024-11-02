@@ -453,7 +453,7 @@ class ApiController {
         return promise;
     }
 
-    updateQuiz = ({ id, category, json_file }) => {
+    updateQuiz = ({ id, category, json_file }) => {        
         let promise = new Promise((resolve, reject) => {
             const formData = new FormData();
             formData.append("category", category);

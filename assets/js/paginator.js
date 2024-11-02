@@ -2,7 +2,7 @@
 class Paginator {
     constructor() {
         this.current_page = 1;
-        this.records_per_page = 2;
+        this.records_per_page = 5;
         this.btn_next = document.getElementById("btn-next");
         this.btn_prev = document.getElementById("btn-prev");
         this.btn_first = document.getElementById("btn-first");

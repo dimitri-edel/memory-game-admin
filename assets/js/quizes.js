@@ -40,7 +40,7 @@ function addItem() {
     }
     let quiz_saved_in_database = apiController.addQuiz({ category, json_file: json });
     let quizes_loaded = apiController.getQuizes();
-    Promise.all([quiz_saved_in_database, quizes_loaded]).then((values) => {       
+    Promise.all([quiz_saved_in_database, quizes_loaded]).then((values) => {
         paginator.lastPage();
     }).catch((error) => {
         if (error === "HTTP error! status: 409") {
@@ -48,7 +48,7 @@ function addItem() {
         }
         console.log(error);
     });
-    
+
     function validateForm() {
         clearValidators();
         if (json === undefined) {
@@ -77,43 +77,28 @@ function editItem(quiz_id) {
         <td><input type="file" id="edit_json" accept="application/json" value="${item.json}"><span id="edit-json-validator" class="validator-message"></span></td>
         <td><span class="save-button" onclick="updateItem(${item.id})"><i class="fa-solid fa-check button-icon"></i></span></td>
         <td><span class="cancel-button" onclick="cancelEdit(${item.id})"><i class="fa-solid fa-xmark button-icon"></i></span></td>
-    `;    
+    `;
 }
 
 function cancelEdit(id) {
-    const item = apiController.quizes.find(item => item.id === id);
-    const row = document.getElementById("row-" + id);
-
-    row.innerHTML = `
-            <td>${apiController.getCategoryName(item.category)}</td>
-            <td>${item.json[0].question}<br>${item.json[0].answer}</td>
-            <td><span class="edit-button" onclick='editItem(${item.id})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
-            <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
-        `;
-
     selected_item = null;
+    paginator.changePage(paginator.current_page);
 }
 
 function updateItem(quiz_id) {
-    const category = document.getElementById("edit_category").value;
+    const category = document.querySelector("#edit_category").textContent;
     const json = document.getElementById("edit_json").files[0];
+
     // If the form is not valid, do nothing
     if (!validateForm()) {
         return;
     }
-    let promise = apiController.updateQuiz({ quiz_id, category, json_file: json });
-    promise.then((data) => {
-        // Update the item in the table
-        const row = document.getElementById("row-" + quiz_id);
-        row.innerHTML = `
-            <td>${apiController.getCategoryName(data.category)}</td>
-            <td>${data.json}</td>
-            <td><span class="edit-button" onclick='editItem(${data.id})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
-            <td><span class="delete-button" onclick="deleteItem(${data.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
-        `;
-        // Unselect the item
-        unselectItem(data);
+    let quiz_updated = apiController.updateQuiz({ id: quiz_id, category: category, json_file: json });
+    quiz_updated.then((data) => {
+        selected_item = null;
+        paginator.changePage(paginator.current_page);
     }).catch((error) => {
+        alert(error.message);
         console.log(error);
     });
 
@@ -164,23 +149,29 @@ function hideAddItemTable() {
 }
 
 function renderItems({ first_index, last_index, ceiling }) {
-    const items = document.getElementById("paginator-table");
-    items.innerHTML = "";
+    let items_loaded = apiController.getQuizes();
+    items_loaded.then((data) => {
 
-    for (var i = first_index; i < last_index && i < ceiling; i++) {
-        const item = apiController.quizes[i];
-        console.log(item);
-        const row = document.createElement("tr");
-        row.setAttribute("id", "row-" + item.id);
-        row.innerHTML = `            
+        const items = document.getElementById("paginator-table");
+        items.innerHTML = "";
+
+        for (var i = first_index; i < last_index && i < ceiling; i++) {
+            const item = apiController.quizes[i];
+            console.log(item);
+            const row = document.createElement("tr");
+            row.setAttribute("id", "row-" + item.id);
+            row.innerHTML = `            
                 <td>${apiController.getCategoryName(item.category)}</td>
                 <td>${item.json[0].question}<br>${item.json[0].answer}</td>
                 <td><span class="edit-button" onclick='editItem(${item.id})'><i class="fa-solid fa-pen-to-square button-icon"></i></span></td>
                 <td><span class="delete-button" onclick="deleteItem(${item.id})"><i class="fa-solid fa-trash-can button-icon"></i></span></td>
             `;
-        items.appendChild(row);
-    }
-    renderAddItemButton();
+            items.appendChild(row);
+        }
+        renderAddItemButton();
+    }).catch((error) => {
+        console.log(error);
+    });
 }
 
 
