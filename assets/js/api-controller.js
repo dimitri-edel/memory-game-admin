@@ -9,7 +9,7 @@ class ApiController {
 
     getCategories = () => {
         let promise = new Promise((resolve, reject) => {
-            const request = new Request(`${base_url}/category/get-all/${api_key}`, {
+            const request = new Request(`${base_url}/category/get-all/`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -176,7 +176,7 @@ class ApiController {
         }
 
         let promise = new Promise((resolve, reject) => {
-            const request = new Request(`${base_url}/playlist/get-all/${filter}/${api_key}`, {
+            const request = new Request(`${base_url}/playlist/get-all/${filter}/`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -341,7 +341,7 @@ class ApiController {
 
     getQuizes = () => {
         let fetchQuizes = new Promise((resolve, reject) => {
-            const request = new Request(`${base_url}/quiz/get-all/none/${api_key}`, {
+            const request = new Request(`${base_url}/quiz/get-all/none/`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
