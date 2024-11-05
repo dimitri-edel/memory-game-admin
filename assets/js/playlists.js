@@ -19,7 +19,7 @@ function editItem(item) {
 
 
     row.innerHTML = `                
-                <td class="selected-row"><select  id="update_category" value="${item.category}">${renderCategoryOptions()}</select></td>
+                <td class="selected-row"><select id="update_category">${renderCategoryOptions(item.category)}</select></td>
                 <td class="selected-row">
                     <span id="audio-select" style="display:none" class="audio-update">
                         <label for="audio">Audio:</label>
@@ -182,11 +182,12 @@ async function deleteItem(id) {
     });
 }
 
-// function for rendering categorie options
-function renderCategoryOptions() {
+// function for rendering category options
+function renderCategoryOptions(selectedCategoryId) {
     let options = "";
     apiController.categories.forEach((category) => {
-        options += `<option value="${category.id}">${category.name}</option>`;
+        const selected = category.id === selectedCategoryId ? 'selected' : '';
+        options += `<option value="${category.id}" ${selected}>${category.name}</option>`;
     });
     return options;
 }
