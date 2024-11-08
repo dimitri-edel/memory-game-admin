@@ -71,6 +71,10 @@ function editItem(quiz_id) {
         unselectItem(selected_item);
     }
     selected_item = item;
+    selectItem(item);
+}
+
+function selectItem(item) {
     const row = document.getElementById("row-" + item.id);
     row.innerHTML = `
         <td>${apiController.getCategoryName(item.category)}<span id="edit_category" hidden>${item.category}</span></td>
