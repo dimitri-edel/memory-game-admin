@@ -137,3 +137,9 @@ function unselectItem(item) {
             </span>
         </td>`;
 }
+
+function cancelEdit(face_id) {
+    const item = apiController.faces.find(face => face.id == face_id);
+    unselectItem(item);
+}
+
