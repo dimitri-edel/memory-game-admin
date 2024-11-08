@@ -691,6 +691,40 @@ class ApiController {
         });
         return promise;
     }
+
+    // Delete a face from the API
+    deleteFace = (id) => {
+        let promise = new Promise((resolve, reject) => {
+            const token1 = this.getCookie("token1");
+            const token2 = this.getCookie("token2");
+
+            const request = new Request(`${base_url}/faces/delete/${id}/`, {
+                method: "DELETE",
+                headers: new Headers({
+                    "token1": token1,
+                    "token2": token2
+                })
+            });
+
+            fetch(request)
+                .then((response) => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return;
+                })
+                .then((data) => {
+                    // Remove the item from the faces
+                    this.faces = this.faces.filter(item => item.id !== id);
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return promise;
+    }
 }
 
 var apiController = new ApiController();
