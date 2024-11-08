@@ -136,3 +136,36 @@ function renderCategoryOptions() {
     });
     return options;
 }
+
+function updateItem(style_id) {
+    const category = document.getElementById("category").value;
+    const primary_color = document.getElementById("primary-color").value;
+    const secondary_color = document.getElementById("secondary-color").value;
+    const complementary_color = document.getElementById("complementary-color").value;
+    const background_image = document.getElementById("background-image").files[0];
+    // If the form is not valid, do nothing
+    if (!validateForm()) {
+        return;
+    }
+    let style_updated = apiController.updateStyle({ id: style_id, category, primary_color, secondary_color, complementary_color, background_image });
+    style_updated.then((data) => {
+        selected_item = null;
+        paginator.changePage(paginator.current_page);
+    }).catch((error) => {
+        alert(error.message);
+        console.log(error);
+    });
+
+    function validateForm() {
+        clearValidators();
+        if (background_image === undefined) {
+            document.getElementById("background-image-validator").innerHTML = "Background Image is required";
+            return false;
+        }
+        return true;
+    }
+
+    function clearValidators() {
+        document.getElementById("background-image-validator").innerHTML = "";
+    }
+}
