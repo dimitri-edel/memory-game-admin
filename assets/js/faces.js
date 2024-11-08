@@ -46,9 +46,10 @@ function hideAddItemTable() {
 
 function renderCategoryOptions() {
     let options = "";
-    for (const category of categories) {
+    apiController.categories.forEach(category => {
         options += `<option value="${category.id}">${category.name}</option>`;
-    }
+    });
+
     return options;
 }
 
@@ -240,7 +241,7 @@ let categories_loaded = apiController.getCategories();
 let faces_loaded = apiController.getFaces();
 
 Promise.all([categories_loaded, faces_loaded]).then(function (values) {
-    categories = values[0];
+    console.log("faces loaded: ", apiController.faces);
     paginator.lastPage();
 }).catch(function (error) {
     console.log(error);

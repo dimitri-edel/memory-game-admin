@@ -133,7 +133,7 @@ class Paginator {
                 return 1;
             }
             return num;
-        } else if (this.getPageName == "faces.html") {
+        } else if (this.getPageName() == "faces.html") {
             let num = Math.ceil(apiController.faces.length / this.records_per_page);
             if (num <= 0) {
                 return 1;

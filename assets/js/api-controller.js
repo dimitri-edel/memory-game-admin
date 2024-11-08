@@ -574,9 +574,9 @@ class ApiController {
     }
 
     // Get a list of faces from the API based on the category_id
-    getFaces = (category_id) => {
+    getFaces = () => {
         let promise = new Promise((resolve, reject) => {
-            const request = new Request(`${base_url}/faces/get-all/${category_id}/`, {
+            const request = new Request(`${base_url}/faces/get-all/`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
