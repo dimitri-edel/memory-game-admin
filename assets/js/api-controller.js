@@ -646,7 +646,51 @@ class ApiController {
         });
         return promise;
     }
-    
+
+    // Update a face in the API
+    updateFace = ({ id, category, image }) => {
+        let promise = new Promise((resolve, reject) => {
+            const formData = new FormData();
+            formData.append("category", category);
+            formData.append("image", image);
+
+            const token1 = this.getCookie("token1");
+            const token2 = this.getCookie("token2");
+
+            const request = new Request(`${base_url}/faces/update/${id}/`, {
+                method: "PUT",
+                body: formData,
+                headers: new Headers({
+                    "token1": token1,
+                    "token2": token2
+                })
+            });
+
+            fetch(request)
+                .then((response) => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // Update the faces
+                    this.faces = this.faces.map(item => {
+                        if (item.id === id) {
+                            item.category = data.category;
+                            item.image = data.image;
+                        }
+                        return item;
+                    });
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return promise;
+    }
 }
 
 var apiController = new ApiController();
