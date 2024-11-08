@@ -177,3 +177,16 @@ function updateItem(face_id) {
     }
 }
 
+function deleteItem(face_id) {
+    let faces_deleted = apiController.deleteFace(face_id);
+    let faces_loaded = apiController.getFaces();
+
+    Promise.all([faces_deleted, faces_loaded]).then(function(values) {
+        paginator.lastPage();
+    }).catch(function(error) {       
+        console.log(error);
+    });
+}
+
+
+
