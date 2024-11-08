@@ -43,3 +43,11 @@ function hideAddItemTable() {
     // Show the add button
     document.getElementById("add-button-container").style.display = "block";
 }
+
+function renderCategoryOptions() {
+    let options = "";
+    for (const category of categories) {
+        options += `<option value="${category.id}">${category.name}</option>`;
+    }
+    return options;
+}
