@@ -169,3 +169,15 @@ function updateItem(style_id) {
         document.getElementById("background-image-validator").innerHTML = "";
     }
 }
+
+function deleteItem(id) {
+    let promise = apiController.deleteStyle(id);
+    promise.then((data) => {
+        // Remove the item from the table
+        const row = document.getElementById("row-" + id);
+        row.remove();
+    }).catch((error) => {
+        console.log(error);
+    });
+}
+
