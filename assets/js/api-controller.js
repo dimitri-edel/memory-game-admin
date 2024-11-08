@@ -725,6 +725,68 @@ class ApiController {
         });
         return promise;
     }
+
+    // Get a list of styles from the API based on the category_id
+    getStyles = (category_id) => {
+        let promise = new Promise((resolve, reject) => {
+            const request = new Request(`${base_url}/styles/get-all/${category_id}/`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            fetch(request)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // If the styles array is not empty, clear it
+                    if (this.styles.length > 0) {
+                        this.styles = [];
+                    }
+                    // Add every style to the styles array
+                    data.forEach((item) => {
+                        this.styles.push(item);
+                    });
+                    resolve(this.styles);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return promise;
+    }
+
+    // Get style based on category_id
+    getStyle = (category_id) => {
+        let promise = new Promise((resolve, reject) => {
+            const request = new Request(`${base_url}/styles/get-by-category/${category_id}/`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            fetch(request)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return promise;
+    }
 }
 
 var apiController = new ApiController();
