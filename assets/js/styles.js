@@ -181,3 +181,45 @@ function deleteItem(id) {
     });
 }
 
+function renderItems({ first_index, last_index, ceiling }){
+    const items_loaded = apiController.getStyles();
+    items_loaded.then((data) => {
+        const items = data.slice(first_index, last_index);
+        const table = document.getElementById("paginator-table");
+        table.innerHTML = "";
+        items.forEach((item) => {
+            const row = document.createElement("tr");
+            row.setAttribute("id", "row-" + item.id);
+            row.innerHTML = `
+                <td>${item.category}</td>
+                <td>${item.primary_color}</td>
+                <td>${item.secondary_color}</td>
+                <td>${item.complementary_color}</td>
+                <td><img src="${item.background_image}" width="50px" height="50px"></td>
+                <td><span class="edit-button" onclick="editItem(${item.id})">
+                    <i class="fa-solid fa-pen button-icon"></i>
+                </span></td>
+                <td><span class="delete-button" onclick="deleteItem(${item.id})">
+                    <i class="fa-solid fa-trash button-icon"></i>
+                </span></td>
+            `;
+            table.appendChild(row);
+        });
+        renderAddItemButton();
+    }).catch((error) => {
+        console.log(error);
+    });
+}
+
+function renderAddItemButton() {
+    const table = document.getElementById("paginator-table");
+    const row = document.createElement("tr");
+    row.innerHTML = `
+        <td colspan="7">
+            <span class="add-button" onclick="showAddItemTable()">
+                <i class="fa-solid fa-plus button-icon"></i>
+            </span>
+        </td>
+    `;
+    table.appendChild(row);
+}
