@@ -3,9 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <!-- Font awsome cdn -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Load categories.css from assets/css folder -->
+    <link rel="stylesheet" href="./assets/css/categories.css">
+    <!-- load navbar.css -->
+    <link rel="stylesheet" href="./assets/css/navbar.css">
+    <title>Faces</title>
 </head>
 <body>
-    <h1>Face</h1>
+    <!-- Placeholder div for the Navigation Bar -->
+    <div id="navbar"></div>
+    <!-- Paginated table for results received from the API -->
+    <table id="listing-table">
+        <thead>
+            <tr>                
+                <th>category</th>                
+                <th>image</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="paginator-table">
+        </tbody>
+    </table>
+    <!-- Buttons for the paginator -->
+    <div id="paginator">
+        <!-- link to the first page -->
+        <a href="javascript:paginator.firstPage()" id="btn-first" class="paginator-button"><i class="fa-solid fa-fast-backward paginator-icon"></i></a>
+        <!-- link to the previous page-->
+        <a href="javascript:paginator.prevPage()" id="btn-prev" class="paginator-button"><i class="fa-solid fa-backward paginator-icon"></i></a>
+        <span id="page" class="paginator-text"></span><span class="paginator-text">&nbsp;of&nbsp;</span><span id="total_pages" class="paginator-text"></span>
+        <!-- link to the next page -->
+        <a href="javascript:paginator.nextPage()" id="btn-next" class="paginator-button"><i class="fa-solid fa-forward paginator-icon"></i></a>
+        <!-- Link to the last page -->
+        <a href="javascript:paginator.lastPage()" id="btn-last" class="paginator-button"><i class="fa-solid fa-fast-forward paginator-icon"></i></a>
+    </div>
+    <!-- Load config.js during develeopment. ! REMOVE BEFORE DEPLOYING !-->
+    <script src="./assets/js/config.js"></script>
+    <!-- Load loadNavBar.js -->
+    <script src="./assets/js/loadNavBar.js"></script>
+    <!-- Load api-controller.js -->
+    <script src="./assets/js/api-controller.js"></script>
+    <!-- Load pagination.js from assets/js folder -->
+    <script src="./assets/js/paginator.js"></script>
+    <!-- load styles.js from assets/js foler -->
+    <script src="./assets/js/faces.js"></script>
 </body>
 </html>
