@@ -4,6 +4,8 @@ class ApiController {
         this.categories = [];
         this.playlists = [];
         this.quizes = [];
+        this.faces = [];
+        this.styles = [];
     }
 
 
@@ -570,6 +572,43 @@ class ApiController {
         });
         return promise;
     }
+
+    // Get a list of faces from the API based on the category_id
+    getFaces = (category_id) => {
+        let promise = new Promise((resolve, reject) => {
+            const request = new Request(`${base_url}/faces/get-all/${category_id}/`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            fetch(request)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // If the faces array is not empty, clear it
+                    if (this.faces.length > 0) {
+                        this.faces = [];
+                    }
+                    // Add every face to the faces array
+                    data.forEach((item) => {
+                        this.faces.push(item);
+                    });
+                    resolve(this.faces);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return promise;
+    }
+   
+
 }
 
 var apiController = new ApiController();
