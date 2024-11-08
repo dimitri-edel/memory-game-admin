@@ -608,7 +608,45 @@ class ApiController {
         return promise;
     }
    
+    // Add a face to the API
+    addFace = ({ category, image }) => {
+        let promise = new Promise((resolve, reject) => {
+            const formData = new FormData();
+            formData.append("category", category);
+            formData.append("image", image);
 
+            const token1 = this.getCookie("token1");
+            const token2 = this.getCookie("token2");
+
+            const request = new Request(`${base_url}/faces/add/`, {
+                method: "POST",
+                body: formData,
+                headers: new Headers({
+                    "token1": token1,
+                    "token2": token2
+                })
+            });
+
+            fetch(request)
+                .then((response) => {
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    // Add the new item to the faces array
+                    this.faces.push(data);
+                    resolve(data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
+        return promise;
+    }
+    
 }
 
 var apiController = new ApiController();
