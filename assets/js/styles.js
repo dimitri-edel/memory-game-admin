@@ -187,9 +187,7 @@ function deleteItem(id) {
 
 function renderItems({ first_index, last_index, ceiling }){
     const items_loaded = apiController.getStyles();
-    items_loaded.then((data) => {
-        console.log("the styles loaded as: ", apiController.styles);
-        console.log(`first_index: ${first_index}, last_index: ${last_index}, ceiling: ${ceiling}`);
+    items_loaded.then((data) => {        
         const itmes = document.getElementById("paginator-table");
         itmes.innerHTML = "";
         for (var i = first_index; i < last_index && i < ceiling; i++) {
@@ -212,7 +210,6 @@ function renderItems({ first_index, last_index, ceiling }){
             `;
             itmes.appendChild(row);
         }
-        
         renderAddItemButton();
     }).catch((error) => {
         console.log(error);

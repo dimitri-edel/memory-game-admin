@@ -57,20 +57,20 @@ function addItem() {
     const category = document.getElementById("category");
     const image = document.getElementById("image").files[0];
 
-     // If the form is not valid, do nothing
-     if (!validateForm()) {
+    // If the form is not valid, do nothing
+    if (!validateForm()) {
         return;
     }
 
-    let faces_saved_in_the_database = apiController.addFace({category, image});
+    let faces_saved_in_the_database = apiController.addFace({ category, image });
     let faces_loaded = apiController.getFaces();
 
-    Promise.all([faces_saved_in_the_database, faces_loaded]).then(function(values) {
+    Promise.all([faces_saved_in_the_database, faces_loaded]).then(function (values) {
         paginator.lastPage();
-    }).catch(function(error) {       
+    }).catch(function (error) {
         console.log(error);
     });
-   
+
     function validateForm() {
         clearValidators();
         if (image === undefined) {
@@ -86,14 +86,14 @@ function addItem() {
     }
 }
 
-function editItem(face_id){
+function editItem(face_id) {
     const item = apiController.faces.find(face => face.id == face_id);
     // If there is a selected item, unselect it
     if (selected_item !== null) {
         unselectItem(selected_item);
     }
-     selected_item = item;
-     selectItem(selected_item);
+    selected_item = item;
+    selectItem(selected_item);
 }
 
 function selectItem(item) {
@@ -148,20 +148,20 @@ function updateItem(face_id) {
     const category = document.getElementById("category");
     const image = document.getElementById("image").files[0];
 
-     // If the form is not valid, do nothing
-     if (!validateForm()) {
+    // If the form is not valid, do nothing
+    if (!validateForm()) {
         return;
     }
 
-    let faces_saved_in_the_database = apiController.updateFace({category, image});
+    let faces_saved_in_the_database = apiController.updateFace({ category, image });
     let faces_loaded = apiController.getFaces();
 
-    Promise.all([faces_saved_in_the_database, faces_loaded]).then(function(values) {
+    Promise.all([faces_saved_in_the_database, faces_loaded]).then(function (values) {
         paginator.lastPage();
-    }).catch(function(error) {       
+    }).catch(function (error) {
         console.log(error);
     });
-   
+
     function validateForm() {
         clearValidators();
         if (image === undefined) {
@@ -181,12 +181,52 @@ function deleteItem(face_id) {
     let faces_deleted = apiController.deleteFace(face_id);
     let faces_loaded = apiController.getFaces();
 
-    Promise.all([faces_deleted, faces_loaded]).then(function(values) {
+    Promise.all([faces_deleted, faces_loaded]).then(function (values) {
         paginator.lastPage();
-    }).catch(function(error) {       
+    }).catch(function (error) {
         console.log(error);
     });
 }
 
+function renderItems({ first_index, last_index, ceiling }) {
+    let items_loaded = apiController.getFaces();
+    items_loaded.then((data) => {
+        const itmes = document.getElementById("paginator-table");
+        itmes.innerHTML = "";
+        for (var i = first_index; i < last_index && i < ceiling; i++) {
+            const item = data[i];
+            console.log("the item is: ", item);
+            const row = document.createElement("tr");
+            row.setAttribute("id", "row-" + item.id);
+            row.innerHTML = `
+                <td>${item.category}</td>
+                <td><img src="${item.image}" alt="${item.category}" class="face-image"></td>
+                <td>
+                    <span class="edit-button" onclick="editItem(${item.id})">
+                        <i class="fa-solid fa-pencil button-icon"></i>
+                    </span>
+                </td>
+                <td>
+                    <span class="delete-button" onclick="deleteItem(${item.id})">
+                        <i class="fa-solid fa-trash button-icon"></i>
+                    </span>
+                </td>`;
+            itmes.appendChild(row);
+        }
+        renderAddItemButton();
+    }).catch(function (error) {
+        console.log(error);
+    });
+}
 
-
+function renderAddItemButton() {
+    const items = document.getElementById("paginator-table");
+    const row = document.createElement("tr");
+    row.innerHTML = `
+        <td colspan="4">
+            <span class="add-button" onclick="showAddItemTable()">
+                <i class="fa-solid fa-plus button-icon"></i>
+            </span>
+        </td>`;
+    items.appendChild(row);
+}
