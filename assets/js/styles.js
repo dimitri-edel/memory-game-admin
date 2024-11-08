@@ -184,10 +184,12 @@ function deleteItem(id) {
 function renderItems({ first_index, last_index, ceiling }){
     const items_loaded = apiController.getStyles();
     items_loaded.then((data) => {
-        const items = data.slice(first_index, last_index);
-        const table = document.getElementById("paginator-table");
-        table.innerHTML = "";
-        items.forEach((item) => {
+        console.log("the styles loaded as: ", apiController.styles);
+        const itmes = document.getElementById("paginator-table");
+        itmes.innerHTML = "";
+        for (var i = first_index; i < last_index && i < ceiling; i++) {
+            const item = data[i];
+            console.log("the item is: ", item);
             const row = document.createElement("tr");
             row.setAttribute("id", "row-" + item.id);
             row.innerHTML = `
@@ -195,7 +197,7 @@ function renderItems({ first_index, last_index, ceiling }){
                 <td>${item.primary_color}</td>
                 <td>${item.secondary_color}</td>
                 <td>${item.complementary_color}</td>
-                <td><img src="${item.background_image}" width="50px" height="50px"></td>
+                <td><img src="${base_url}${item.background_image}" width="50px" height="50px"></td>
                 <td><span class="edit-button" onclick="editItem(${item.id})">
                     <i class="fa-solid fa-pen button-icon"></i>
                 </span></td>
@@ -203,8 +205,9 @@ function renderItems({ first_index, last_index, ceiling }){
                     <i class="fa-solid fa-trash button-icon"></i>
                 </span></td>
             `;
-            table.appendChild(row);
-        });
+            itmes.appendChild(row);
+        }
+        
         renderAddItemButton();
     }).catch((error) => {
         console.log(error);
@@ -214,6 +217,7 @@ function renderItems({ first_index, last_index, ceiling }){
 function renderAddItemButton() {
     const table = document.getElementById("paginator-table");
     const row = document.createElement("tr");
+    row.setAttribute("id", "add-button-container");
     row.innerHTML = `
         <td colspan="7">
             <span class="add-button" onclick="showAddItemTable()">
@@ -223,3 +227,16 @@ function renderAddItemButton() {
     `;
     table.appendChild(row);
 }
+
+paginator.addEventListener("on-change", renderItems);
+paginator.addEventListener("on-change", hideAddItemTable);
+paginator.addEventListener("on-change", (selected_item) => { selected_item = null; });
+
+let categories_loaded = apiController.getCategories();
+let styles_loaded = apiController.getStyles();
+
+Promise.all([categories_loaded, styles_loaded]).then((values) => {
+    paginator.changePage(1);
+}).catch((error) => {
+    console.log(error);
+});

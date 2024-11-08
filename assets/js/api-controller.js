@@ -727,9 +727,9 @@ class ApiController {
     }
 
     // Get a list of styles from the API based on the category_id
-    getStyles = (category_id) => {
+    getStyles = () => {
         let promise = new Promise((resolve, reject) => {
-            const request = new Request(`${base_url}/styles/get-all/${category_id}/`, {
+            const request = new Request(`${base_url}/styles/get-all/`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -793,10 +793,10 @@ class ApiController {
         let promise = new Promise((resolve, reject) => {
             const formData = new FormData();
             formData.append("category", category);
-            formData.append("background-image", background_image);
-            formData.append("primary-color", primary_color);
-            formData.append("secondary-color", secondary_color);
-            formData.append("complementary-color", complementary_color);
+            formData.append("background_image", background_image);
+            formData.append("primary_color", primary_color);
+            formData.append("secondary_color", secondary_color);
+            formData.append("complementary_color", complementary_color);
             
             const token1 = this.getCookie("token1");
             const token2 = this.getCookie("token2");
