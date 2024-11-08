@@ -51,3 +51,37 @@ function renderCategoryOptions() {
     }
     return options;
 }
+
+function addItem() {
+    // Validate the category
+    const category = document.getElementById("category");
+    const image = document.getElementById("image").files[0];
+
+     // If the form is not valid, do nothing
+     if (!validateForm()) {
+        return;
+    }
+
+    let faces_saved_in_the_database = apiController.addFace({category, image});
+    let faces_loaded = apiController.getFaces();
+
+    Promise.all([faces_saved_in_the_database, faces_loaded]).then(function(values) {
+        paginator.lastPage();
+    }).catch(function(error) {       
+        console.log(error);
+    });
+   
+    function validateForm() {
+        clearValidators();
+        if (image === undefined) {
+            document.getElementById("image-validator").textContent = "Please select an image";
+            return false;
+        }
+        return true;
+    }
+
+    function clearValidators() {
+        document.getElementById("category-validator").textContent = "";
+        document.getElementById("image-validator").textContent = "";
+    }
+}
