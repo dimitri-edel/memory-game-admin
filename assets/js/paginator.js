@@ -178,6 +178,10 @@ class Paginator {
             ceiling = apiController.categories.length;
         } else if (page_name == "quizes.html") {
             ceiling = apiController.quizes.length;
+        } else if (page_name == "styles.html") {
+            ceiling = apiController.styles.length;
+        } else if (page_name == "faces.html") {
+            ceiling = apiController.faces.length;
         }
         return { first_index, last_index, ceiling };
     }

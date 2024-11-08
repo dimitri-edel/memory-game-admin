@@ -178,6 +178,10 @@ function deleteItem(id) {
         row.remove();
     }).catch((error) => {
         console.log(error);
+        // If errror message contains 401, then the user is not authenticated and should be redirected to the login page
+        if (error.message.includes("401")) {
+            window.location.href = "login.html";
+        }
     });
 }
 
@@ -185,6 +189,7 @@ function renderItems({ first_index, last_index, ceiling }){
     const items_loaded = apiController.getStyles();
     items_loaded.then((data) => {
         console.log("the styles loaded as: ", apiController.styles);
+        console.log(`first_index: ${first_index}, last_index: ${last_index}, ceiling: ${ceiling}`);
         const itmes = document.getElementById("paginator-table");
         itmes.innerHTML = "";
         for (var i = first_index; i < last_index && i < ceiling; i++) {
