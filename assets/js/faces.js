@@ -230,3 +230,18 @@ function renderAddItemButton() {
         </td>`;
     items.appendChild(row);
 }
+
+
+paginator.addEventListener("on-change", renderItems);
+paginator.addEventListener("on-change", hideAddItemTable);
+paginator.addEventListener("on-change", (selected_item) => { selected_item = null; });
+
+let categories_loaded = apiController.getCategories();
+let faces_loaded = apiController.getFaces();
+
+Promise.all([categories_loaded, faces_loaded]).then(function (values) {
+    categories = values[0];
+    paginator.lastPage();
+}).catch(function (error) {
+    console.log(error);
+});
