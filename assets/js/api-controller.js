@@ -831,12 +831,15 @@ class ApiController {
     }
 
     // Update a style in the API
-    updateStyle = ({ id, category, image }) => {
+    updateStyle = ({id, category, primary_color, secondary_color, complementary_color, background_image }) => {
         let promise = new Promise((resolve, reject) => {
             const formData = new FormData();
             formData.append("category", category);
-            formData.append("image", image);
-
+            formData.append("background_image", background_image);
+            formData.append("primary_color", primary_color);
+            formData.append("secondary_color", secondary_color);
+            formData.append("complementary_color", complementary_color);
+            
             const token1 = this.getCookie("token1");
             const token2 = this.getCookie("token2");
 
