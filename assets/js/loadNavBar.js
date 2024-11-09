@@ -8,7 +8,7 @@ function getPageName() {
 // Function for loading the navigation bar
 function loadNavBar() {
     // Create the list items for the navigation bar
-    const pages = ["login.html", "categories.html", "quizes.html", "playlists.html", "styles.html", "faces.html"];
+    const pages = ["index.html", "categories.html", "quizes.html", "playlists.html", "styles.html", "faces.html"];
     // Create the unordered list and attach it to the navbar element
     const navBar = document.getElementById("navbar");
     const ul = document.createElement("ul");

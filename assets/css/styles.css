@@ -59,11 +59,6 @@ table img {
     margin: 0 auto;
 }
 
-#add-button-container {
-    width: 100%;   
-    display: inline;    
-}
-
 .add-button-icon {
     width: 45px;
     height: 45px;

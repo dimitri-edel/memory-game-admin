@@ -62,7 +62,7 @@ function addItem() {
             document.getElementById("category-validator").innerHTML = "A Style for this Category alredy exists! Please choose another Category!";
         }
         if (error.message.includes("401")) {
-            window.location.href = "login.html";
+            window.location.href = "index.html";
         }
         console.log(error);
     });
@@ -187,7 +187,7 @@ function deleteItem(id) {
         console.log(error);
         // If errror message contains 401, then the user is not authenticated and should be redirected to the login page
         if (error.message.includes("401")) {
-            window.location.href = "login.html";
+            window.location.href = "index.html";
         }
     });
 }
@@ -203,7 +203,7 @@ function renderItems({ first_index, last_index, ceiling }){
             const row = document.createElement("tr");
             row.setAttribute("id", "row-" + item.id);
             row.innerHTML = `
-                <td>${apiController.getCategoryName(item.category)};</td>
+                <td>${apiController.getCategoryName(item.category)}</td>
                 <td style="background-color:${item.primary_color};">primary color</td>
                 <td style="background-color:${item.secondary_color};">secondary color</td>
                 <td style="background-color:${item.complementary_color};">complementary color</td>
@@ -226,7 +226,8 @@ function renderItems({ first_index, last_index, ceiling }){
 function renderAddItemButton() {
     const table = document.getElementById("paginator-table");
     const row = document.createElement("tr");
-    
+    row.setAttribute("id", "add-button-container");
+
     row.innerHTML = `
         <td></td><td></td><td></td><td></td><td></td><td></td>
         <td>
