@@ -203,8 +203,8 @@ function renderItems({ first_index, last_index, ceiling }) {
             const row = document.createElement("tr");
             row.setAttribute("id", "row-" + item.id);
             row.innerHTML = `
-                <td>${item.category}</td>
-                <td><img src="${item.image}" alt="${item.category}" class="face-image"></td>
+                <td>${apiController.getCategoryName(item.category)}</td>
+                <td><img src="${base_url}${item.image}" alt="${item.category}" class="face-image"></td>
                 <td>
                     <span class="edit-button" onclick="editItem(${item.id})">
                         <i class="fa-solid fa-pencil button-icon"></i>
@@ -227,7 +227,7 @@ function renderAddItemButton() {
     const items = document.getElementById("paginator-table");
     const row = document.createElement("tr");
     row.setAttribute("id", "add-button-container");
-    
+
     row.innerHTML = `
         <td></td><td></td><td></td>
         <td>
