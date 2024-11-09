@@ -223,6 +223,7 @@ function renderItems({ first_index, last_index, ceiling }) {
 function renderAddItemButton() {
     const items = document.getElementById("paginator-table");
     const row = document.createElement("tr");
+    row.setAttribute("id", "add-button-container");
     row.innerHTML = `
         <td colspan="4">
             <span class="add-button" onclick="showAddItemTable()">
