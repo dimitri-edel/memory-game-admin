@@ -58,7 +58,7 @@ function renderCategoryOptions() {
 
 function addItem() {
     // Validate the category
-    const category = document.getElementById("category");
+    const category = document.getElementById("category").value;
     const image = document.getElementById("image").files[0];
 
     // If the form is not valid, do nothing
@@ -226,6 +226,7 @@ function renderItems({ first_index, last_index, ceiling }) {
 function renderAddItemButton() {
     const items = document.getElementById("paginator-table");
     const row = document.createElement("tr");
+    row.setAttribute("id", "add-button-container");
     
     row.innerHTML = `
         <td></td><td></td><td></td>
