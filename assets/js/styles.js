@@ -58,8 +58,11 @@ function addItem() {
     Promise.all([style_saved_in_database, styles_loaded]).then((values) => {
         paginator.lastPage();
     }).catch((error) => {
-        if (error === "HTTP error! status: 409") {
+        if (error.message.includes("409")) {
             document.getElementById("category-validator").innerHTML = "A Style for this Category alredy exists! Please choose another Category!";
+        }
+        if (error.message.includes("401")) {
+            window.location.href = "login.html";
         }
         console.log(error);
     });
@@ -200,10 +203,10 @@ function renderItems({ first_index, last_index, ceiling }){
             const row = document.createElement("tr");
             row.setAttribute("id", "row-" + item.id);
             row.innerHTML = `
-                <td>${item.category}</td>
-                <td>${item.primary_color}</td>
-                <td>${item.secondary_color}</td>
-                <td>${item.complementary_color}</td>
+                <td>${apiController.getCategoryName(item.category)};</td>
+                <td style="background-color:${item.primary_color};">primary color</td>
+                <td style="background-color:${item.secondary_color};">secondary color</td>
+                <td style="background-color:${item.complementary_color};">complementary color</td>
                 <td><img src="${base_url}${item.background_image}" width="50px" height="50px"></td>
                 <td><span class="edit-button" onclick="editItem(${item.id})">
                     <i class="fa-solid fa-pen button-icon"></i>
