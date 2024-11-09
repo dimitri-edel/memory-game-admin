@@ -34,8 +34,12 @@ function showAddItemTable() {
 }
 
 function hideAddItemTable() {
-    const row = document.getElementById("add_item_row");
-    row.remove();
+    const listing_table = document.getElementById("paginator-table");
+    // Remove the row with the id "add_item_row"
+    try { listing_table.removeChild(document.getElementById("add_item_row")); }
+    catch (e) {
+        return;
+    }
     document.getElementById("add-button-container").style.display = "block";
 }
 
@@ -219,9 +223,10 @@ function renderItems({ first_index, last_index, ceiling }){
 function renderAddItemButton() {
     const table = document.getElementById("paginator-table");
     const row = document.createElement("tr");
-    row.setAttribute("id", "add-button-container");
+    
     row.innerHTML = `
-        <td colspan="7">
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td>
             <span class="add-button" onclick="showAddItemTable()">
                 <i class="fa-solid fa-plus button-icon"></i>
             </span>

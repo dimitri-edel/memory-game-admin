@@ -1,0 +1,119 @@
+#filter-container {
+    display: flex;
+    justify-content: left;
+    /* make a gap between the filter and the adjacent element */
+    column-gap: 20px;    
+    margin: 20px auto;    
+    width: 80%;
+    background-color: #f8fbfb;
+}
+#filter-container * {
+    margin: 20px 0;
+    padding: 0;
+}
+
+
+table {
+    width: 80%;
+    margin: 0 auto;
+}
+
+
+.selected-row {
+    background-color: #dddfdf;
+}
+
+th,
+td {
+    padding: 15px;
+    text-align: left;
+}
+
+th {
+    background-color: #d3edea;
+}
+
+td {
+    background-color: #f8fbfb;
+    text-align: center;
+}
+table img {
+    width: auto;
+    height: 50px;
+}
+
+.image-update {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* align items vertically */
+    flex-direction: column;
+}
+.button-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    margin: 0 autho;
+    color: #766259;
+    background-color: white;
+    margin: 0 auto;
+}
+
+#add-button-container {
+    width: 100%;   
+    display: inline;    
+}
+
+.add-button-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 45px;
+    /* margin-left: 30px; */
+    background-color: white;
+    color: #766259;
+    /* margin: 0 auto; */
+}
+/* button for adding tiems */
+#add-item-button {
+    background-color: #4e413b;
+    width: 50px;
+    height: auto;   
+    padding: 0;    
+    border: solid 1px #231e1b;
+    border-radius: 10px;
+    text-align: center;
+    display:inline-block;
+}
+
+#paginator {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+.paginator-button {
+    width: 30px;
+    height: 30px;
+    font-size: 30px;    
+    color: #766259;
+    background-color: white;
+    margin: 10px;
+}
+
+.paginator-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    margin: 0 auto;
+    color: #766259;
+    background-color: white;
+    margin: 0 auto;
+}
+.paginator-text {
+    margin: auto 5px;
+}
+
+.validator-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
