@@ -120,7 +120,7 @@ function updateItem(quiz_id) {
     }
 }
 
-
+// Options for the select element
 function renderCategoryOptions() {
     let options = "";
     apiController.categories.forEach((category) => {

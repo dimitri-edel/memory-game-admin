@@ -97,7 +97,7 @@ function selectItem(item) {
     row.innerHTML = `
         <td>
             <select id="category" name="category">
-                ${renderCategoryOptions()}
+                ${renderCategoryOptions(item.category)}
             </select>
             <span id="category-validator" class="validator-message"></span>
         </td>
@@ -136,10 +136,12 @@ function cancelEditItem(id) {
     paginator.changePage(paginator.current_page);
 }
 
-function renderCategoryOptions() {
+// function for rendering category options
+function renderCategoryOptions(selectedCategoryId) {
     let options = "";
     apiController.categories.forEach((category) => {
-        options += `<option value="${category.id}">${category.name}</option>`;
+        const selected = category.id === selectedCategoryId ? 'selected' : '';
+        options += `<option value="${category.id}" ${selected}>${category.name}</option>`;
     });
     return options;
 }
