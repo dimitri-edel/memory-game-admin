@@ -1,8 +1,8 @@
 let selected_item = null;
 
 function showAddItemTable() {
-     // If there is a selected item, unselect it
-     if (selected_item !== null) {
+    // If there is a selected item, unselect it
+    if (selected_item !== null) {
         unselectItem(selected_item);
     }
     // Create a new row
@@ -82,7 +82,7 @@ function addItem() {
 }
 
 function editItem(style_id) {
-   const item = apiController.styles.find((style) => style.id === style_id);
+    const item = apiController.styles.find((style) => style.id === style_id);
     // If there is a selected item, unselect it
     if (selected_item !== null) {
         unselectItem(selected_item);
@@ -117,11 +117,11 @@ function selectItem(item) {
 function unselectItem(item) {
     const row = document.getElementById("row-" + item.id);
     row.innerHTML = `
-        <td>${item.category}</td>
-        <td>${item.primary_color}</td>
-        <td>${item.secondary_color}</td>
-        <td>${item.complementary_color}</td>
-        <td><img src="${item.background_image}" width="50px" height="50px"></td>
+        <td>${apiController.getCategoryName(item.category)}</td>
+        <td style="background-color:${item.primary_color};">primary color</td>
+        <td style="background-color:${item.secondary_color};">secondary color</td>
+        <td style="background-color:${item.complementary_color};">complementary color</td>
+        <td><img src="${base_url}${item.background_image}" width="50px" height="50px"></td>        
         <td><span class="edit-button" onclick="editItem(${item.id})">
             <i class="fa-solid fa-pen button-icon"></i>
         </span></td>
@@ -194,9 +194,9 @@ function deleteItem(id) {
     });
 }
 
-function renderItems({ first_index, last_index, ceiling }){
+function renderItems({ first_index, last_index, ceiling }) {
     const items_loaded = apiController.getStyles();
-    items_loaded.then((data) => {        
+    items_loaded.then((data) => {
         const itmes = document.getElementById("paginator-table");
         itmes.innerHTML = "";
         for (var i = first_index; i < last_index && i < ceiling; i++) {
