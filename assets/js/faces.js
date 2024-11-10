@@ -47,12 +47,23 @@ function hideAddItemTable() {
     document.getElementById("add-button-container").style.display = "block";
 }
 
-function renderCategoryOptions() {
-    let options = "";
-    apiController.categories.forEach(category => {
-        options += `<option value="${category.id}">${category.name}</option>`;
-    });
+// function renderCategoryOptions() {
+//     let options = "";
+//     apiController.categories.forEach(category => {
+//         options += `<option value="${category.id}">${category.name}</option>`;
+//     });
 
+//     return options;
+// }
+
+
+// function for rendering category options
+function renderCategoryOptions(selectedCategoryId) {
+    let options = "";
+    apiController.categories.forEach((category) => {
+        const selected = category.id === selectedCategoryId ? 'selected' : '';
+        options += `<option value="${category.id}" ${selected}>${category.name}</option>`;
+    });
     return options;
 }
 
@@ -105,7 +116,7 @@ function selectItem(item) {
     row.innerHTML = `
         <td>
             <select id="category" name="category">
-                ${renderCategoryOptions()}
+                ${renderCategoryOptions(item.category)}
             </select>
             <span id="category-validator" class="validator-message"></span>
         </td>
@@ -128,8 +139,8 @@ function selectItem(item) {
 function unselectItem(item) {
     const row = document.getElementById("row-" + item.id);
     row.innerHTML = `
-        <td>${item.category.name}</td>
-        <td><img src="${item.image}" alt="${item.category.name}" class="face-image"></td>
+        <td>${apiController.getCategoryName(item.category)}</td>
+        <td><img src="${base_url+item.image}" alt="${apiController.getCategoryName(item.category)}" class="face-image"></td>
         <td>
             <span class="edit-button" onclick="editItem(${item.id})">
                 <i class="fa-solid fa-pencil button-icon"></i>
