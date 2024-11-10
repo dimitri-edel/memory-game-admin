@@ -249,7 +249,7 @@ let categories_loaded = apiController.getCategories();
 let styles_loaded = apiController.getStyles();
 
 Promise.all([categories_loaded, styles_loaded]).then((values) => {
-    paginator.changePage(1);
+    paginator.firstPage();
 }).catch((error) => {
     console.log(error);
 });

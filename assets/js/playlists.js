@@ -380,7 +380,7 @@ let categories_promise = apiController.getCategories();
 let playlist_promise = apiController.getPlaylists();
 
 Promise.all([categories_promise, playlist_promise]).then((values) => {
-    paginator.changePage(1);
+    paginator.firstPage();
 }).catch((error) => {
     console.log("Error loading playlists: ");
     console.log(error);

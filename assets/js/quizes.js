@@ -206,7 +206,7 @@ let categories_loaded = apiController.getCategories();
 let quizes_loaded = apiController.getQuizes();
 
 Promise.all([categories_loaded, quizes_loaded]).then((values) => {
-    paginator.changePage(1);
+    paginator.firstPage();
 }).catch((error) => {
     console.log("Error loading quizes: ");
     console.log(error);

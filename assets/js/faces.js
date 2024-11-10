@@ -259,7 +259,7 @@ let faces_loaded = apiController.getFaces();
 
 Promise.all([categories_loaded, faces_loaded]).then(function (values) {
     console.log("faces loaded: ", apiController.faces);
-    paginator.lastPage();
+    paginator.firstPage();
 }).catch(function (error) {
     console.log(error);
 });

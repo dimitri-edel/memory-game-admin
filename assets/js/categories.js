@@ -222,7 +222,7 @@ paginator.addEventListener("on-change", (selected_item) => { selected_item = nul
 
 let categories_loaded = apiController.getCategories();
 categories_loaded.then((data) => {
-    paginator.changePage(1);
+    paginator.firstPage();
 }).catch((error) => {
     console.log(error);
 });
